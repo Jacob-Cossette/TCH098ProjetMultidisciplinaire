@@ -17,23 +17,23 @@
 #include "driver.h"
 #include "uart.h"
 
-#include "manette.h"		//nouveau module créé
+#include "manette.h"		//nouveau module crï¿½ï¿½
 
 
 int main(void)
 {
-	//Déclaration des variables
+	//Dï¿½claration des variables
 
-	//Variables envoyées au véhicule
+	//Variables envoyï¿½es au vï¿½hicule
 	uint8_t x;					//joystick en x
 	uint8_t y;					//joystick en y
-	uint8_t inclinaison;		//potentiomètre linéaire
+	uint8_t inclinaison;		//potentiomï¿½tre linï¿½aire
 
-	uint8_t mode = 0;			//(0 = DÉPLACEMENT, 1 = ROTATION)
-	uint8_t moteur = 0;			//(1 = en marche, 1 = fermé)
+	uint8_t mode = 0;			//(0 = Dï¿½PLACEMENT, 1 = ROTATION)
+	uint8_t moteur = 0;			//(1 = en marche, 1 = fermï¿½)
 	uint8_t lancer = 0;			//(1 = lancer munition, 0 = ne pas lancer munition)
 	
-	//Variables intermédiaires servant aux calculs 
+	//Variables intermï¿½diaires servant aux calculs 
 	uint8_t etat_mode = 0;
 	uint8_t etat_moteur = 0;
 	uint8_t etat_lance = 0;
@@ -41,7 +41,7 @@ int main(void)
 	
 	uint8_t del = 0b00011111; //Nombres de munitions (Max = 5 && 0b00011111 => 5)
 
-	char str[40]; // Message envoyé au véhicule
+	char str[40]; // Message envoyï¿½ au vï¿½hicule
 	
 	
 	//initialisation
@@ -54,16 +54,16 @@ int main(void)
 
 	sei();
 
-	//Début de l'exécution
+	//Dï¿½but de l'exï¿½cution
 	while(1){
 		
 		lcd_clear_display();
 		
-		//Déterminer si véhicule est en mode DÉPLACEMENT ou ROTATION avec la SW1
+		//Dï¿½terminer si vï¿½hicule est en mode Dï¿½PLACEMENT ou ROTATION avec la SW1
 		lire_mode(&mode, PD7, &etat_mode);
 		
-		//Déterminer si le moteur du frisbee est activé
-		//Le moteur du lance frisbee ne peut être activé s'il n'y a plus de munitions
+		//Dï¿½terminer si le moteur du frisbee est activï¿½
+		//Le moteur du lance frisbee ne peut ï¿½tre activï¿½ s'il n'y a plus de munitions
 		if (del){
 			lire_mode(&moteur, PD6, &etat_moteur);
 		}
@@ -73,17 +73,17 @@ int main(void)
 		etat_moteur = 0;
 		}
 		
-		//Afficher sur LCD l'état du moteur de lance-frisbee et le mode (DÉPLACEMENT ou ROTATION)
+		//Afficher sur LCD l'ï¿½tat du moteur de lance-frisbee et le mode (Dï¿½PLACEMENT ou ROTATION)
 		display_mode(mode, moteur);
 		
-		//Test pour vérifier l'affichage et le rafraîchissement
+		//Test pour vï¿½rifier l'affichage et le rafraï¿½chissement
 		display_heartbeat();
 		
 		//Lire et afficher l'inclinaison sur LCD
 		lire_potentiometres(&x, &y, &inclinaison);
 		afficher_potentiometres(x, y, inclinaison);
 		
-		//Lancer munition si le moteur du lance-frisbee est activé
+		//Lancer munition si le moteur du lance-frisbee est activï¿½
 		if (moteur){
 			lire_etat_lancer(&lancer, &etat_lance, &del);
 
@@ -92,7 +92,7 @@ int main(void)
 			PORTB=set_bits(PORTB,del);
 		}
 		
-		//Message envoyé au véhicule en string
+		//Message envoyï¿½ au vï¿½hicule en string
 		sprintf(str, "X%03dY%03dZ%03dm%dM%dL%dD%d\n", x, y, inclinaison, mode, moteur, lancer, del);
 		uart_put_string(UART_0,str);
 		
@@ -105,5 +105,7 @@ int main(void)
 	
 }
 
+void display_heartbeat(void) {
+	static uint8_t heartbeat = 'Z';
 
 #endif
