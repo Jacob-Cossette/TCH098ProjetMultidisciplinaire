@@ -172,7 +172,7 @@ void pwm1_init(uint16_t top){
 	TCCR1B=clear_bit(TCCR1B,CS10);
 }
 
-void pwm1_set_PD5(uint16_t limit){
+void pwm1_set_PD5(uint16_t limit){ 
 	OCR1A = limit;
 }
 void pwm1_set_PD4(uint16_t limit){
