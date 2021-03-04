@@ -147,3 +147,4 @@ void set_virage_droite_avant (uint8_t intensite){
 		pwm2_set_PD7(INTENSITE_TOTAL_ROUE-intensite);
 	}
 }
+
