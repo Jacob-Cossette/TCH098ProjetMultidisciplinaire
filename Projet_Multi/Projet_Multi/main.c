@@ -22,3 +22,12 @@ int main(void)
     }
 }
 
+void display_heartbeat(void) {
+	static uint8_t heartbeat = 'Z';
+
+	heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat + 1);
+
+	lcd_set_cursor_position(15, 1);
+	lcd_write_char(heartbeat);
+
+}
