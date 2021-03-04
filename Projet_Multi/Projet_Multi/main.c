@@ -29,6 +29,11 @@
 *           --               --
 *
 */
+
+//*******Uint******
+	static uint8_t INTENSITE_TOTAL_ROUE = 100;
+	static uint8_t INTENSITE_ARRET = 0;
+	static uint8_t INTENSITE_MIN_VIRAGE = 10;
 int main(void)
 {
     /* Replace with your application code */
@@ -43,9 +48,6 @@ int main(void)
 	PORTA = set_bit(PORTA, PINA2); // definition utiliter
 	DDRB = set_bits(DDRB, 0b00011111);
 	
-	//*******Uint******
-	static uint8_t INTENSITE_1 = 25;
-	static uint8_t INTENSITE_ARRET = 0;
 	
 	//*******BOOL******
 	bool button_state; // bool ok
@@ -55,29 +57,93 @@ int main(void)
 
 	while(1){
 		button_state = read_bit (PINA, PINA2);
-		if ( button_state == FALSE){
-		pwm0_set_PB3(intensite);
-		pwm0_set_PB4(INTENSITE_1);
-		INTENSITE_1 = INTENSITE_1+10;
-		intensite = intensite +10;
-		_delay_ms(500);
+			if ( button_state == FALSE){
+			set_all_wheel(INTENSITE_TOTAL_ROUE);
+			_delay_ms(500);
+			}
+			if (button_state == TRUE){
+			set_all_wheel(INTENSITE_ARRET);
+
+			}
 		}
-		if (button_state == TRUE){
-		pwm0_set_PB3(0);
-		pwm0_set_PB4(0);
-		intensite = 0;
-		intensite1 = 0;
-		}
-	}
     }
 }
 
-void set_roue_avant(uint8_t vitesse){ //vitesse sur 100
+
+/*
+* Methode: Setter pour les quatre moteur roue du v/hicule  
+* Created: 3/4/2021 
+* Author : Jacob
+*/
+void set_all_wheel(uint8_t vitesse){
+	set_back_wheel(vitesse);
+	set_front_wheel(vitesse);
+}
+
+/*
+* Methode: Setter pour les 2 moteur roue avant du v/hicule
+* Created: 3/4/2021 
+* Author : Jacob
+*/
+
+void set_front_wheel(uint8_t vitesse){ //vitesse sur 100
 	pwm1_set_PD4(vitesse);
 	pwm2_set_PD6(vitesse);
 }
 
-void set_roue_arriere(uint8_t vitesse){ //vitesse sur 100
+
+/*
+* Methode: Setter pour les 2 moteur roue arrier du v/hicule
+* Created: 3/4/2021 
+* Author : Jacob
+*/
+
+void set_back_wheel(uint8_t vitesse){ //vitesse sur 100
 	pwm1_set_PD5(vitesse);
 	pwm2_set_PD7(vitesse);
+}
+
+
+/*
+* Methode: Setter pour un virage vers la gauche lorsque 
+* le v/hicule est en mouvement.
+* Created: 3/4/2021 
+* Author : Jacob
+*/
+
+void set_virage_gauche_avant (uint8_t intensite){
+	if (intensite >= 95){
+		pwm1_set_PD4(INTENSITE_MIN_VIRAGE);
+		pwm1_set_PD5(INTENSITE_MIN_VIRAGE);
+		pwm2_set_PD6(intensite);
+		pwm2_set_PD7(intensite);			
+	}
+		else{
+		pwm1_set_PD4(INTENSITE_TOTAL_ROUE-intensite);		
+		pwm1_set_PD5(INTENSITE_TOTAL_ROUE-intensite);
+		pwm2_set_PD6(intensite);
+		pwm2_set_PD7(intensite);
+	}
+}
+
+/*
+* Methode: Setter pour un virage vers la doite lorsque
+* le v/hicule est en mouvement.
+* Created: 3/4/2021 
+* Author : Jacob
+*/
+
+void set_virage_droite_avant (uint8_t intensite){
+	if (intensite >= 95){
+		pwm1_set_PD4(intensite);
+		pwm1_set_PD5(intensite);
+		pwm2_set_PD6(INTENSITE_MIN_VIRAGE);
+		pwm2_set_PD7(INTENSITE_MIN_VIRAGE);
+	}
+	else{
+		pwm1_set_PD4(intensite);
+		pwm1_set_PD5(intensite);
+		pwm2_set_PD6(INTENSITE_TOTAL_ROUE-intensite);
+		pwm2_set_PD7(INTENSITE_TOTAL_ROUE-intensite);
+	}
 }
