@@ -118,7 +118,7 @@ void set_virage_gauche_avant (uint8_t intensite){
 		pwm2_set_PD6(intensite);
 		pwm2_set_PD7(intensite);			
 	}
-		else{
+	else{
 		pwm1_set_PD4(INTENSITE_TOTAL_ROUE-intensite);		
 		pwm1_set_PD5(INTENSITE_TOTAL_ROUE-intensite);
 		pwm2_set_PD6(intensite);
@@ -146,5 +146,36 @@ void set_virage_droite_avant (uint8_t intensite){
 		pwm2_set_PD6(INTENSITE_TOTAL_ROUE-intensite);
 		pwm2_set_PD7(INTENSITE_TOTAL_ROUE-intensite);
 	}
+
+/*
+* Methode: Setter pour un virage vers la droite static
+* 
+* Created: 3/4/2021
+* Author : Jacob
+*/	
+	
+void set_virage_static_droite(uint8_t intensite){
+			pwm1_set_PD4(intensite);
+			pwm1_set_PD5(intensite);
+			pwm2_set_PD6(-(intensite));
+			pwm2_set_PD7(-(intensite));
+	
+	}
+
+/*
+* Methode: Setter pour un virage vers la gauche static
+*
+* Created: 3/4/2021
+* Author : Jacob
+*/
+
+void set_virage_static_gauche(uint8_t intensite){
+	pwm1_set_PD4(-(intensite))
+	pwm1_set_PD5(-(intensite));
+	pwm2_set_PD6(intensite);;
+	pwm2_set_PD7(intensite);
+	
+	}	
+	
 }
 
