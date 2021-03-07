@@ -11,8 +11,12 @@
  * Author : Jacob
  */ 
 
-#include <avr/io.h>
 
+#include <avr/io.h>
+#include <util/delay.h>
+
+#include "utils.h"
+#include "lcd.h"
 
 
 /*          --_______________--
@@ -36,13 +40,14 @@
 	static uint8_t INTENSITE_MIN_VIRAGE = 10;
 int main(void)
 {
-    /* Replace with your application code */
+    /*Replace with your application code */
 
 		
 	// Configuration des broche de sortie	
-	pwm0_init();
-	pwm1_init(100); // TOP = 100 DUTY = pourcentage d<activation
-	pwm2_init(100); // TOP = 100 DUTY = pourcentage d<activation
+	lcd_init();
+	pwm0_init(256);
+	pwm1_init(256); // TOP = 100 DUTY = pourcentage d<activation
+	pwm2_init(256); // TOP = 100 DUTY = pourcentage d<activation
 	
 	DDRA = clear_bit(DDRA, PINA2);// udeclarer entrer
 	PORTA = set_bit(PORTA, PINA2); // definition utiliter
@@ -57,17 +62,20 @@ int main(void)
 
 	while(1){
 		button_state = read_bit (PINA, PINA2);
+		pwm1_set_PD5(250);
 			if ( button_state == FALSE){
-			set_all_wheel(INTENSITE_TOTAL_ROUE);
-			_delay_ms(500);
+		set_all_wheel(250);
+		_delay_ms(500);
+			lcd_clear_display();
 			}
 			if (button_state == TRUE){
-			set_all_wheel(INTENSITE_ARRET);
-
+		set_all_wheel(INTENSITE_ARRET);
+		_delay_ms(1000);
+		
 			}
 		}
-    }
 }
+
 
 
 /*
@@ -170,12 +178,17 @@ void set_virage_static_droite(uint8_t intensite){
 */
 
 void set_virage_static_gauche(uint8_t intensite){
-	pwm1_set_PD4(-(intensite))
+	pwm1_set_PD4(-(intensite));
 	pwm1_set_PD5(-(intensite));
 	pwm2_set_PD6(intensite);;
 	pwm2_set_PD7(intensite);
 	
 	}	
-	
+void display_heartbeat(void){
+	static uint8_t heartbeat = 'Z';
+	heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat+1);
+	lcd_set_cursor_position(15,1);//position sur lecran
+	lcd_write_char(heartbeat);
+	}
 }
 
