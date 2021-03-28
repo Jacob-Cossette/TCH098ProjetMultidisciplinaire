@@ -1,6 +1,12 @@
 /*
- * MANETTE MODE
- */ 
+ *
+ *OBJECTIF: Conceoption des modes
+ *
+ * Projet_Multi
+ *
+ * Created: 3/26/2021 12:03:21 PM
+ * Author : Jing Tong
+ */
 #if(1)
 #include <avr/io.h>
 #include <avr/interrupt.h>
