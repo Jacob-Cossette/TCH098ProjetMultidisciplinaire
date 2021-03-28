@@ -43,69 +43,95 @@ Function definition
 void adc_init(void){
 
 	// 1-Configuration des broches du port A à mettre en entrée
-	//DDRA = clear_bit(DDRA, PA0);  //Décommenter pour utiliser
-	//DDRA = clear_bit(DDRA, PA1);  //Décommenter pour utiliser
-	//DDRA = clear_bit(DDRA, PA2); //Décommenter pour utiliser
-	//DDRA = clear_bit(DDRA, PA3); //Décommenter pour utiliser
-	//DDRA = clear_bit(DDRA, PA4); //Décommenter pour utiliser
+	DDRA = clear_bit(DDRA, PA0);  //Décommenter pour utiliser
+	DDRA = clear_bit(DDRA, PA1);  //Décommenter pour utiliser
+	DDRA = clear_bit(DDRA, PA2); //Décommenter pour utiliser
+	DDRA = clear_bit(DDRA, PA3); //Décommenter pour utiliser
+	DDRA = clear_bit(DDRA, PA4); //Décommenter pour utiliser
 	
 	
 	// 2-Sélectionner la référence de tension: la tension d'alimentation
-	
+	ADMUX = clear_bit(ADMUX, REFS1);
+	ADMUX = set_bit(ADMUX, REFS0);
 
 	// 3-Choisir le format du résultat de conversion: shift a gauche pour que
 	// les 8 MSB se retrouvent dans le registre ADCH (ADLAR=1)
-	
+	ADMUX = set_bit(ADMUX, ADLAR);
 
-	// 4-Choisir le facteur de division de l'horloge 
+	// 4-Choisir le facteur de division de l'horloge
 	// ( L'horloge l'ADC ne doit pas dépasser 200kHz. Avec une horloge de 8MHZ, ça
 	// prend une division d'horloge de min 40. Donc 64 ou 128) */
-	
+	ADCSRA = set_bit(ADCSRA, ADPS2);
+	ADCSRA = set_bit(ADCSRA, ADPS1);
+	ADCSRA = set_bit(ADCSRA, ADPS0);
 	
 	// 5-Activer le CAN
-	
-	
+	ADCSRA = set_bit(ADCSRA, ADEN);
 }
 
 uint8_t adc_read(uint8_t canal){
 
-	// 1-Sélection de l'entrée à convertir (canal)
-	ADMUX = write_bits(ADMUX, 0b00000111, canal);
-	
-	// 2-Démarrage d'une conversion
-	
+// 1-Sélection de l'entrée à convertir (canal)
+ADMUX = write_bits(ADMUX, 0b00000111, canal);
 
-	// 3-Attente de la fin de conversion
-	
+// 2-Démarrage d'une conversion
+ADCSRA = set_bit(ADCSRA, ADSC);
 
-	// 4-Lecture et renvoi du résultat
+// 3-Attente de la fin de conversion
+//TODO : Avec une boucle, regarder le bit ASC tant que ce n'es aps terminé
+
+uint8_t val=1;
+while(val==1){
+	val = read_bit(ADCSRA, ADSC);
+}
+
+// 4-Lecture et renvoi du résultat
+return ADCH;
 	
 }
 
 void pwm0_init(void){
 
 	// 1-Configuration des broches de sortie (PB4 et PB3)
+
+	
 	// 1.1-Mettre les broches de la modulation de largeur d'impulsion en sortie
 	
+	DDRB = set_bit(DDRB,PB4); // pb4 = 1
+	DDRB = set_bit(DDRB,PB3); // pb3 = 1
 	
+	// PEUT ETRE AUTRE CHOSE 
 	// 2-Initialisation du TIMER 0
 	// 2.1- Mode de comparaison : "Toggle on compare match"
+
+	
+	TCCR0A = set_bit(TCCR0A,COM0A1);
+	TCCR0A = set_bit(TCCR0A,COM0B1);
+	TCCR0A = clear_bit(TCCR0A,COM0A0);
+	TCCR0A = clear_bit(TCCR0A,COM0B0);
+	
 	
 	
 	// 2.2- Mode du compteur :  "PWM phase correct"
 	
+	TCCR0A = set_bit(TCCR0A,WGM00);
+	TCCR0A = clear_bit(TCCR0A,WGM01);
 	
 	// 2.3- Fixer la valeur initiale du compteur 0 à 0
 	
+	 TCNT0 = 0;
 	
 	// 2.4- Facteur de division de fréquence : 1
 	
-
+	TCCR0B = set_bit(TCCR0B,CS00);
+	TCCR0B = clear_bit(TCCR0B,CS01);
+	TCCR0B = clear_bit(TCCR0B,CS02);
 }
 
 void pwm0_set_PB3(uint8_t duty){
 
 	// Fixer le rapport cyclique à la valeur de duty
+	OCR0A = duty; 
 	
 }
 
@@ -113,7 +139,7 @@ void pwm0_set_PB3(uint8_t duty){
 void pwm0_set_PB4(uint8_t duty){
 
 	// Fixer le rapport cyclique à la valeur de duty
-	
+	OCR0B = duty;
 }
 
 void pwm1_init(uint16_t top){	
@@ -146,7 +172,7 @@ void pwm1_init(uint16_t top){
 	TCCR1B=clear_bit(TCCR1B,CS10);
 }
 
-void pwm1_set_PD5(uint16_t limit){
+void pwm1_set_PD5(uint16_t limit){ 
 	OCR1A = limit;
 }
 void pwm1_set_PD4(uint16_t limit){
@@ -160,25 +186,43 @@ void pwm2_init(){
 	
 	//Set OC2A/B on Compare Match when up-counting. Clear OC2A on	Compare Match when down-counting.
 	
+	// PEUT ETRE AUTRE CHOSE
+	// 2-Initialisation du TIMER 0
+	// 2.1- Mode de comparaison : "Toggle on compare match"
+
 	
-	// PWM phase correct
+	TCCR2A = set_bit(TCCR2A,COM0A1);
+	TCCR2A = set_bit(TCCR2A,COM0B1);
+	TCCR2A = clear_bit(TCCR2A,COM0A0);
+	TCCR2A = clear_bit(TCCR2A,COM0B0);
+	
+	
+	
+	// 2.2- Mode du compteur :  "PWM phase correct"
+	
+	TCCR2A = set_bit(TCCR2A,WGM00);
+	TCCR2A = clear_bit(TCCR2A,WGM01);
+	
+	// 2.3- Fixer la valeur initiale du compteur 0 à 0
+	
+	TCNT2 = 0;
+	
+	// 2.4- Facteur de division de fréquence : 1
+	
+	TCCR2B = set_bit(TCCR2B,CS00);
+	TCCR2B = clear_bit(TCCR2B,CS01);
+	TCCR2B = clear_bit(TCCR2B,CS02);
+}
 	
 
-	// valeur initiale du compteur à 0
-		
-		
-	// activer l'horloge avec facteur de division de 8
-	
-}
 
 void pwm2_set_PD7(uint8_t limit){
 	// Fixer le rapport cyclique à la valeur de duty
-	
+	OCR2A = limit;	
 }
 
 void pwm2_set_PD6(uint8_t limit){
 	// Fixer le rapport cyclique à la valeur de duty
-	
+	OCR2B = limit;
 }
-
 
