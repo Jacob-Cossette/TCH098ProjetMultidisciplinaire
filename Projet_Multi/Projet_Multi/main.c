@@ -1,194 +1,109 @@
 /*
- *OBJECTIF: Concevoir et réaliser un véhicule télécommandé pouvant lancer des petits
- *	disques sur des cibles ainsi que sa manette de contrôle dans un délai de 15 semaines. 
- *	Par la suite, vous ferez la démonstration des performances de votre prototype lors d’
- *	une compétition organisée durant la période des examens finaux. La suite du cahier des 
- *	charges décrit les conditions et contraintes auxquelles votre projet devra répondre.
+ * main.c
  *
- * Projet_Multi.c
- *
- * Created: 3/4/2021 12:03:21 PM
- * Author : Jacob
+ * Created: 2021-02-04 15:34:18
+ * Author : Jing Tong Chen
  */ 
 
 
+
+#if(1)
 #include <avr/io.h>
+#include <avr/interrupt.h>
+#include <stdio.h>    		 // sprintf
 #include <util/delay.h>
-
-#include "utils.h"
 #include "lcd.h"
+#include "utils.h"			// set_bit
+#include "driver.h"
+#include "uart.h"
+
+#include "manette.h"		//nouveau module créé
 
 
-/*          --_______________--
-*      PD4 |  |             |  | PD6
-*          |  |             |  |
-*           --|             |--
-*             |             |
-*             |				|
-*             |				|
-*             |				|
-*           --|             |--
-*      PD5 |  |             |  | PD7
-*          |  |_____________|  |
-*           --               --
-*
-*/
-
-//*******Uint******
-	static uint8_t INTENSITE_TOTAL_ROUE = 100;
-	static uint8_t INTENSITE_ARRET = 0;
-	static uint8_t INTENSITE_MIN_VIRAGE = 10;
 int main(void)
 {
-    /*Replace with your application code */
+	//Déclaration des variables
 
-		
-	// Configuration des broche de sortie	
+	//Variables envoyées au véhicule
+	uint8_t x;					//joystick en x
+	uint8_t y;					//joystick en y
+	uint8_t inclinaison;		//potentiomètre linéaire
+
+	uint8_t mode = 0;			//(0 = DÉPLACEMENT, 1 = ROTATION)
+	uint8_t moteur = 0;			//(1 = en marche, 1 = fermé)
+	uint8_t lancer = 0;			//(1 = lancer munition, 0 = ne pas lancer munition)
+	
+	//Variables intermédiaires servant aux calculs 
+	uint8_t etat_mode = 0;
+	uint8_t etat_moteur = 0;
+	uint8_t etat_lance = 0;
+	
+	
+	uint8_t del = 0b00011111; //Nombres de munitions (Max = 5 && 0b00011111 => 5)
+
+	char str[40]; // Message envoyé au véhicule
+	
+	
+	//initialisation
 	lcd_init();
-	pwm0_init(256);
-	pwm1_init(256); // TOP = 100 DUTY = pourcentage d<activation
-	pwm2_init(256); // TOP = 100 DUTY = pourcentage d<activation
+	adc_init();
+	uart_init(UART_0);
 	
-	DDRA = clear_bit(DDRA, PINA2);// udeclarer entrer
-	PORTA = set_bit(PORTA, PINA2); // definition utiliter
-	DDRB = set_bits(DDRB, 0b00011111);
-	
-	
-	//*******BOOL******
-	bool button_state; // bool ok
-	bool direction = TRUE; 
-	
-	 
+	sw_init();
+	DDRB=set_bits(DDRB,0b00011111);
 
+	sei();
+
+	//Début de l'exécution
 	while(1){
-		button_state = read_bit (PINA, PINA2);
-		pwm1_set_PD5(250);
-			if ( button_state == FALSE){
-		set_all_wheel(250);
-		_delay_ms(500);
-			lcd_clear_display();
-			}
-			if (button_state == TRUE){
-		set_all_wheel(INTENSITE_ARRET);
-		_delay_ms(1000);
 		
-			}
+		lcd_clear_display();
+		
+		//Déterminer si véhicule est en mode DÉPLACEMENT ou ROTATION avec la SW1
+		lire_mode(&mode, PD7, &etat_mode);
+		
+		//Déterminer si le moteur du frisbee est activé
+		//Le moteur du lance frisbee ne peut être activé s'il n'y a plus de munitions
+		if (del){
+			lire_mode(&moteur, PD6, &etat_moteur);
 		}
-}
+		else
+		{
+		moteur = 0;
+		etat_moteur = 0;
+		}
+		
+		//Afficher sur LCD l'état du moteur de lance-frisbee et le mode (DÉPLACEMENT ou ROTATION)
+		display_mode(mode, moteur);
+		
+		//Test pour vérifier l'affichage et le rafraîchissement
+		display_heartbeat();
+		
+		//Lire et afficher l'inclinaison sur LCD
+		lire_potentiometres(&x, &y, &inclinaison);
+		afficher_potentiometres(x, y, inclinaison);
+		
+		//Lancer munition si le moteur du lance-frisbee est activé
+		if (moteur){
+			lire_etat_lancer(&lancer, &etat_lance, &del);
 
+			//Afficher le nombre de munitions sur DEL
+			PORTB=clear_bits(PORTB,0b00011111);
+			PORTB=set_bits(PORTB,del);
+		}
+		
+		//Message envoyé au véhicule en string
+		sprintf(str, "X%03dY%03dZ%03dm%dM%dL%dD%d\n", x, y, inclinaison, mode, moteur, lancer, del);
+		uart_put_string(UART_0,str);
+		
+		_delay_ms(100);
+		
+		
 
-
-/*
-* Methode: Setter pour les quatre moteur roue du v/hicule  
-* Created: 3/4/2021 
-* Author : Jacob
-*/
-void set_all_wheel(uint8_t vitesse){
-	set_back_wheel(vitesse);
-	set_front_wheel(vitesse);
-}
-
-/*
-* Methode: Setter pour les 2 moteur roue avant du v/hicule
-* Created: 3/4/2021 
-* Author : Jacob
-*/
-
-void set_front_wheel(uint8_t vitesse){ //vitesse sur 100
-	pwm1_set_PD4(vitesse);
-	pwm2_set_PD6(vitesse);
-}
-
-
-/*
-* Methode: Setter pour les 2 moteur roue arrier du v/hicule
-* Created: 3/4/2021 
-* Author : Jacob
-*/
-
-void set_back_wheel(uint8_t vitesse){ //vitesse sur 100
-	pwm1_set_PD5(vitesse);
-	pwm2_set_PD7(vitesse);
-}
-
-
-/*
-* Methode: Setter pour un virage vers la gauche lorsque 
-* le v/hicule est en mouvement.
-* Created: 3/4/2021 
-* Author : Jacob
-*/
-
-void set_virage_gauche_avant (uint8_t intensite){
-	if (intensite >= 95){
-		pwm1_set_PD4(INTENSITE_MIN_VIRAGE);
-		pwm1_set_PD5(INTENSITE_MIN_VIRAGE);
-		pwm2_set_PD6(intensite);
-		pwm2_set_PD7(intensite);			
 	}
-	else{
-		pwm1_set_PD4(INTENSITE_TOTAL_ROUE-intensite);		
-		pwm1_set_PD5(INTENSITE_TOTAL_ROUE-intensite);
-		pwm2_set_PD6(intensite);
-		pwm2_set_PD7(intensite);
-	}
-}
-
-/*
-* Methode: Setter pour un virage vers la doite lorsque
-* le v/hicule est en mouvement.
-* Created: 3/4/2021 
-* Author : Jacob
-*/
-
-void set_virage_droite_avant (uint8_t intensite){
-	if (intensite >= 95){
-		pwm1_set_PD4(intensite);
-		pwm1_set_PD5(intensite);
-		pwm2_set_PD6(INTENSITE_MIN_VIRAGE);
-		pwm2_set_PD7(INTENSITE_MIN_VIRAGE);
-	}
-	else{
-		pwm1_set_PD4(intensite);
-		pwm1_set_PD5(intensite);
-		pwm2_set_PD6(INTENSITE_TOTAL_ROUE-intensite);
-		pwm2_set_PD7(INTENSITE_TOTAL_ROUE-intensite);
-	}
-
-/*
-* Methode: Setter pour un virage vers la droite static
-* 
-* Created: 3/4/2021
-* Author : Jacob
-*/	
 	
-void set_virage_static_droite(uint8_t intensite){
-			pwm1_set_PD4(intensite);
-			pwm1_set_PD5(intensite);
-			pwm2_set_PD6(-(intensite));
-			pwm2_set_PD7(-(intensite));
 	
-	}
-
-/*
-* Methode: Setter pour un virage vers la gauche static
-*
-* Created: 3/4/2021
-* Author : Jacob
-*/
-
-void set_virage_static_gauche(uint8_t intensite){
-	pwm1_set_PD4(-(intensite));
-	pwm1_set_PD5(-(intensite));
-	pwm2_set_PD6(intensite);;
-	pwm2_set_PD7(intensite);
-	
-	}	
-void display_heartbeat(void){
-	static uint8_t heartbeat = 'Z';
-	heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat+1);
-	lcd_set_cursor_position(15,1);//position sur lecran
-	lcd_write_char(heartbeat);
-	}
 }
 
+
+#endif
