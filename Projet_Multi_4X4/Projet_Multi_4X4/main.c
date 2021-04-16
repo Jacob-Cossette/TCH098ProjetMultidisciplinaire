@@ -85,25 +85,8 @@ int main(void){
 		
 		switch (mode)
 		{case 1:
-			
-			if (x >= 200){
-				DDRB = clear_bits(DDRB, 0b0000011);
-				PORTB = set_bit(DDRB, 2);
-				pwm0_set_PB3(z);
-				pwm0_set_PB4(z);
-			}
-			else if (x <= 100){
-				DDRB = clear_bits(DDRB, 0b0000011);
-				PORTB = set_bit(DDRB, 1);
-				pwm0_set_PB3(z);
-				pwm0_set_PB4(z);
-			}
-			
-			else{
-				pwm0_set_PB3(0);
-				pwm0_set_PB4(0);
-				}
-				break;
+		 	driverDirection ();
+			driverLanceur( sw2, sw3,  y);
 		case 0:
 		
 		// changer la variable moteur pour diration R --> arrier D --> Avant
@@ -166,9 +149,11 @@ int main(void){
 *Parametre uint8_t y   : Joystick y cicuit_mannette
 *
 */
-	void driveurLanceur(uint8_t sw2,uint8_t sw3, uint8_t y)    {
+	void driverLanceur(uint8_t sw2,uint8_t sw3, uint8_t y)    {
 		driverMoteurElevation(y);
 		driverServoMoteur(sw3);
+		
+		
 		driverMoteurRoueInertie(sw2);
 	}
 	
@@ -191,19 +176,19 @@ int main(void){
 			PORTB = set_bit(DDRB,0);
 			pwm6_set_PB0(PUISSANCE_MAX);
 			
-			}
+		}
 		else if ( y ==0){
 			PORTD = clear_bit(DDRD,6)
 			PORTB = set_bit(DDRB,0);
 			pwm6_set_PB0(PUISSANCE_MAX);
 			
-			}	
+		}	
 		else {
 			pwm6_set_PB0(PUISSANCE_MAX);
 		}		
 		
 			DDRB = clear_bits(DDRB, 0b0000011);
-		PORTB = set_bit(DDRB, 2);
+			PORTB = set_bit(DDRB, 2);
 	}
 	
 /*
@@ -228,6 +213,6 @@ int main(void){
 /*
 *
 */
-	void driverMoteurRoueInertie(uint8_t bouton){
-		
+	void driverMoteurRoueInertie(uint8_t bouton, unint16_t clock){
+		clock++;
 	}
