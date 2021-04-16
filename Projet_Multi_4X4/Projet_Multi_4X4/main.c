@@ -5,7 +5,7 @@
  * Author : Jing Tong Chen et Jacob Cossette
  */ 
 
-// Programme de embarquÈe:
+// Programme de embarqu√©e:
 //
 #include <avr/io.h>
 #include <util/delay.h>
@@ -30,6 +30,7 @@ int main(void){
 	lcd_init();
 	pwm0_init();
 	pwm2_init();
+	pwm6_
 	setPuissanceMoteurRoue ();
 	setRotation();
 
@@ -38,12 +39,15 @@ int main(void){
 	//*******Uint******
 	uint8_t x = 0;			// Position Joystick x
 	uint8_t y = 0;			// Position Joystick y
-	uint8_t z = 0;			// Position potentiomËtre
-	uint8_t mode = 0;		// Variable selection des mondes 1: DÈplacement 2: Tir sw1
+	uint8_t z = 0;			// Position potentiom√®tre
+	uint8_t mode = 0;		// Variable selection des mondes 1: D√©placement 2: Tir sw1
 	uint8_t moteurLanceur = 0;	// Activation du moteur de tir sw2
 	uint8_t servoMoteurLanceur = 0;		// Activation du servo-moteur tir sw3
 	uint8_t joystick = 0;	// Bouton JoyStick pour R et D
 	
+	
+	//****Constante*****
+	const uint8_t PUISSANCE_MAX = 255;
 	
 	//******Strings*****
 	char message[40] = {'\0'};
@@ -53,7 +57,7 @@ int main(void){
 	
 	DDRB = clear_bits(DDRB, 0b0000111);
 
-	//Test pour vÈrifier l'affichage et le rafraÓchissement
+	//Test pour v√©rifier l'affichage et le rafra√Æchissement
 	
 	
 	
@@ -144,4 +148,66 @@ int main(void){
 		lcd_set_cursor_position(15, 1);
 		lcd_write_char(heartbeat);
 		//uart_put_byte(UART_0, heartbeat);
+	}
+
+
+
+/************************************************************************/
+/*                 DRIVER LANCEUR 4X4                                   */
+/************************************************************************/
+/*
+*Fonction Initialise les diff√©rents drivers utiliser dans la Fonction Lancer du 
+*vehicule 4X4
+*Fait appel au driver du moetru RI Servo Moteur et moteur d elevation
+*
+*Parametre uint8_t sw2 : Bouton sw2 circuit_mannette
+*Parametre uint8_t sw3 : Bouton sw3 circuit_mannette
+
+
+*/
+	void driveurLanceur(uint8_t sw2,uint8_t sw3, uint8_t y)    {
+		driverMoteurElevation(y);
+		driverServoMoteur(sw3);
+		driverMoteurRoueInertie(sw2);
+	}
+	
+	
+/*
+*
+*/	
+	void driverMoteurElevation(uint8_t y){
+		if(y == 255){
+			PORTB = clear_bits(DDRB,0b10000000);
+			PORTD = set_bit(DDRD,6)
+			PORTB = set_bit(DDRB,0);
+			pwm6_set_PB0(PUISSANCE_MAX);
+			
+			}
+		else if ( y ==0){
+			PORTD = clear_bit(DDRD,6)
+			PORTB = set_bit(DDRB,0);
+			pwm6_set_PB0(PUISSANCE_MAX);
+			
+			}	
+		else {
+			pwm6_set_PB0(PUISSANCE_MAX);
+		}		
+		
+			DDRB = clear_bits(DDRB, 0b0000011);
+		PORTB = set_bit(DDRB, 2);
+	}
+	
+/*
+*
+*/
+	
+	void driverServoMoteur(uint8_t bouton){
+		
+	}
+
+/*
+*
+*/
+	void driverMoteurRoueInertie(uint8_t bouton){
+		
 	}
