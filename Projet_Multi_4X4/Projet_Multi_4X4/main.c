@@ -162,8 +162,8 @@ int main(void){
 *
 *Parametre uint8_t sw2 : Bouton sw2 circuit_mannette
 *Parametre uint8_t sw3 : Bouton sw3 circuit_mannette
-
-
+*Parametre uint8_t y   : Joystick y cicuit_mannette
+*
 */
 	void driveurLanceur(uint8_t sw2,uint8_t sw3, uint8_t y)    {
 		driverMoteurElevation(y);
@@ -173,7 +173,15 @@ int main(void){
 	
 	
 /*
+* Driver Pour le moteur d elevation
+* 
+* Strategie : L objectif est d activer le moteur d elevation de la platforme
+* de tir. Le courant fournie est constant et est activer par l axe Y du joystick. 
+* il est utilise comme une switch ou son etaps max et min est utilise pour 
+* represente un 1 ( MAX ou MIN ) et un 0 lorsque Y = 127. Finalement la position 
+* y = 255 fait elever la platform et Y = 0 fait descendre la platforme
 *
+* Parametre uint8_t y   : Joystick y cicuit_mannette
 */	
 	void driverMoteurElevation(uint8_t y){
 		if(y == 255){
@@ -198,7 +206,7 @@ int main(void){
 	}
 	
 /*
-*
+* Driver pour le Servo Moteur de poucer des disques   
 */
 	
 	void driverServoMoteur(uint8_t bouton){
