@@ -156,9 +156,10 @@ int main(void){
 /*                 DRIVER LANCEUR 4X4                                   */
 /************************************************************************/
 /*
-*Fonction Initialise les différents drivers utiliser dans la Fonction Lancer du 
-*vehicule 4X4
-*Fait appel au driver du moetru RI Servo Moteur et moteur d elevation
+* Fonction Initialise les différents drivers utiliser dans la Fonction Lancer du 
+* vehicule 4X4
+*
+* Fait appel au driver du moetru RI Servo Moteur et moteur d elevation.
 *
 *Parametre uint8_t sw2 : Bouton sw2 circuit_mannette
 *Parametre uint8_t sw3 : Bouton sw3 circuit_mannette
@@ -179,7 +180,7 @@ int main(void){
 * de tir. Le courant fournie est constant et est activer par l axe Y du joystick. 
 * il est utilise comme une switch ou son etaps max et min est utilise pour 
 * represente un 1 ( MAX ou MIN ) et un 0 lorsque Y = 127. Finalement la position 
-* y = 255 fait elever la platform et Y = 0 fait descendre la platforme
+* y = 255 fait elever la platform et Y = 0 fait descendre la platforme.
 *
 * Parametre uint8_t y   : Joystick y cicuit_mannette
 */	
@@ -206,7 +207,18 @@ int main(void){
 	}
 	
 /*
-* Driver pour le Servo Moteur de poucer des disques   
+* Driver pour le Servo Moteur de poucer des disques  
+*
+* Strategie : Controle du servomoteur, Active une sequence du de tir 
+* du disque courant. la methode doit mettre en place une securite
+* qui empeche l utilisateur d effectuer une demande de tirs tant que
+* le tirs n est pas effectue et que la roue d inertie n est pas a 
+* vitesse nominal.
+*
+* interogation : est-il possible de mettre un decompte sur la mannette 
+* ou  de continuer a utiliser le 4X4 durant le temps d attente.
+*
+* Parametre uint8_t sw3 : Bouton sw3 circuit_mannette
 */
 	
 	void driverServoMoteur(uint8_t bouton){
