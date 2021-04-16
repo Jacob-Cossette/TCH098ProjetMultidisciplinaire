@@ -2,17 +2,14 @@
  * Projet_Multi_4X4.c
  *
  * Created: 4/15/2021 4:47:15 PM
- * Author : Jing Tong et Jacob
+ * Author : Jing Tong Chen et Jacob Cossette
  */ 
 
-// Programme d'initiation :
-// Programme qui allume les DELs lorsque le bouton du « joystick » est appuyé et
-// affiche le message « DEL en fonction » sur l’écran LCD et éteint les DELs lorsque
-// le bouton du « joystick » est relâché et affiche le message « DEL hors fonction ».
-
+// Programme de embarquée:
+//
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/interrupt.h> // a faire je me rappelle plus les comande 
+#include <avr/interrupt.h>
 #include "driver.h"
 #include "utils.h"
 #include "lcd.h"
@@ -24,23 +21,28 @@
 
 
 
+
+
 int main(void){
 	
+	//*******Fonction******
 	uart_init(UART_0);
 	lcd_init();
 	pwm0_init();
 	pwm2_init();
+	setPuissanceMoteurRoue ();
+	setRotation();
 
 	sei();
 	
 	//*******Uint******
-	uint8_t x = 0;
-	uint8_t y = 0;
-	uint8_t z = 0;
-	uint8_t mode = 0;
-	uint8_t direction = 0;
-	uint8_t lancer = 0;
-	uint8_t joystick = 0;
+	uint8_t x = 0;			// Position Joystick x
+	uint8_t y = 0;			// Position Joystick y
+	uint8_t z = 0;			// Position potentiomètre
+	uint8_t mode = 0;		// Variable selection des mondes 1: Déplacement 2: Tir sw1
+	uint8_t moteurLanceur = 0;	// Activation du moteur de tir sw2
+	uint8_t servoMoteurLanceur = 0;		// Activation du servo-moteur tir sw3
+	uint8_t joystick = 0;	// Bouton JoyStick pour R et D
 	
 	
 	//******Strings*****
@@ -52,25 +54,13 @@ int main(void){
 	DDRB = clear_bits(DDRB, 0b0000111);
 
 	//Test pour vérifier l'affichage et le rafraîchissement
-	void display_heartbeat(void) {
-		static uint8_t heartbeat = 'Z';
-
-		heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat + 1);
-
-		lcd_set_cursor_position(15, 1);
-		lcd_write_char(heartbeat);
-		//uart_put_byte(UART_0, heartbeat);
-
-		
-	}
+	
 	
 	
 	while (1)
 	{
 		
-		
-		
-		
+// Lecture de donnee envoyer
 
 		if (!uart_is_rx_buffer_empty(UART_0)){
 			//if(uart_get_byte(UART_0) =='X'){
@@ -85,7 +75,7 @@ int main(void){
 				lcd_set_cursor_position(0,0);
 
 				lcd_write_string(str);
-			//} 
+		
 			
 		}
 		
@@ -141,6 +131,27 @@ int main(void){
 	display_heartbeat();
 		
 	}
-	
-	
+
 }
+	void setRotation(uint8_t valeur){
+		
+		
+	}
+	
+	
+	void setPuissanceMoteurRoue (uint8_t valeur){
+		pwm0_set_PB3(valeur);
+		pwm0_set_PB4(valeur);
+	}
+	
+	void display_heartbeat(void) {
+		static uint8_t heartbeat = 'Z';
+
+		heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat + 1);
+
+		lcd_set_cursor_position(15, 1);
+		lcd_write_char(heartbeat);
+		//uart_put_byte(UART_0, heartbeat);
+
+		
+	}
