@@ -68,10 +68,10 @@ int main(void){
 				_delay_ms(20);
 				uart_get_string(UART_0,message,151);
 
-				sscanf(message,  "X%03dY%03dZ%03dm%dM%dL%dD%d\0", &x, &y, &z, &mode, &direction, &lancer, &joystick);
+				sscanf(message,  "X%03dY%03dZ%03dm%dM%dL%dD%d\0", &x, &y, &z, &mode, &moteurLanceur, &servoMoteurLanceur, &joystick);
 				//sprintf(str, "%s", message);
 				
-				sprintf(str, "X%03dY%03dZ%03dm%dM%dL%dD%d\0", x, y, z, mode, direction, lancer, joystick);
+				sprintf(str, "X%03dY%03dZ%03dm%dM%dL%dD%d\0", x, y, z, mode, moteurLanceur, servoMoteurLanceur, joystick);
 				lcd_set_cursor_position(0,0);
 
 				lcd_write_string(str);
@@ -104,38 +104,32 @@ int main(void){
 		
 		// changer la variable moteur pour diration R --> arrier D --> Avant
 		// NOTE :  ceci est un brouillon
-		if(direction == "G")
+		if(joystick == 1){
 			
 				DDRB = clear_bits(DDRB, 0b0000011);
 				//PB1 = 1 PB2 = 1 Alors la direction est vers l<avant 
 				PORTB = set_bit(DDRB, 3);
-				pwm0_set_PB3(z);
-				pwm0_set_PB4(z);
-			
-		else if (direction == "D"){
+				setPuissanceMoteurRoue(z);
+		}
+		else if (joystick == 0){
 				DDRB = clear_bits(DDRB, 0b0000011);
 				PORTB = set_bit(DDRB,0);
-				pwm0_set_PB3(z);
-				pwm0_set_PB4(z);
+				setPuissanceMoteurRoue(z);
 			}
 			
 		else{
-				pwm0_set_PB3(0);
-				pwm0_set_PB4(0);
+				setPuissanceMoteurRoue(0);
 			}
 			break;
 		}
 	
 	
 		
-	display_heartbeat();
-		
+	display_heartbeat();		
 	}
 
 }
-	void setRotation(uint8_t valeur){
-		
-		
+	void setRotation(uint8_t valeur){	
 	}
 	
 	
@@ -146,12 +140,8 @@ int main(void){
 	
 	void display_heartbeat(void) {
 		static uint8_t heartbeat = 'Z';
-
 		heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat + 1);
-
 		lcd_set_cursor_position(15, 1);
 		lcd_write_char(heartbeat);
 		//uart_put_byte(UART_0, heartbeat);
-
-		
 	}
