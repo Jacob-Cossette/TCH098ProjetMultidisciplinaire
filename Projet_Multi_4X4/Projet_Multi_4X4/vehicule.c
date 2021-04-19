@@ -2,8 +2,6 @@
  * CFile1.c
  *
  * Created: 2021-04-16 10:54:56
- * 
- *
  *
  * Projet_Multi_4X4.c
  *
@@ -30,11 +28,14 @@ const static uint8_t PUISSANCE_MOTEUR_ROUE_INERTIE = 200;
 const static uint8_t PUISSANCE_MOTEUR_ELEVATION = 130;
 const static uint8_t DELAIS_DEPART_ROUE_INERTIE = 20;
 const static uint8_t RESET_CLOCK = 0;
+const static uint8_t DELAIS_TIRS = 60;
+const static uint8_t DELAIS_SERVO_MOTEUR = 4;
 
 //*******int********
+static uint16_t clock1 = 0;
 static uint16_t clock2 = 0;
-static uint16_t clock = 0;
-
+static uint16_t clock3 = 0;
+static uint8_t memoire = 0;
 
 /************************************************************************/
 /*                 DRIVER MOUVEMENT 4X4                                   */
@@ -49,20 +50,18 @@ static uint16_t clock = 0;
 */
 void setRotation (uint8_t x, uint8_t z){
 			if (x >= 200){
-				DDRB = clear_bits(DDRB, 0b0000110);
-				PORTB = set_bit(DDRB, 2);
+				DDRB = clear_bits(DDRB, 0b0000110); // REFACTOR
+				PORTB = set_bit(DDRB, 2);			// REFACTOR
 				setPuissanceMoteurRoue(z);
 			}
 			else if (x <= 100){
-				DDRB = clear_bits(DDRB, 0b0000110);
-				PORTB = set_bit(DDRB, 1);
+				DDRB = clear_bits(DDRB, 0b0000110);	// REFACTOR
+				PORTB = set_bit(DDRB, 1);			// REFACTOR
 				setPuissanceMoteurRoue(z);
 			}
-			
 			else{
 				setPuissanceMoteurRoue(0);	
-			}
-			
+			}	
 }
 
 
@@ -130,14 +129,13 @@ void setPuissance_tourner (uint8_t x, uint8_t z){
 //fonction pour déplacer le véhicule (tourner et reculer/avancer)
 void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 		if (joystick == 1){
-			PORTB = clear_bits(DDRB, 0b0000110);
+			PORTB = clear_bits(DDRB, 0b0000110);	// REFACTOR
 			setPuissance_tourner (x,z);
 		}
 		else if(joystick == 0){
-			PORTB = set_bits(DDRB, 0b0000110);
+			PORTB = set_bits(DDRB, 0b0000110);		// REFACTOR
 			setPuissance_tourner (x,z);
-		}
-				
+		}			
 		else{
 			setPuissanceMoteurRoue(0);
 		}
@@ -172,13 +170,13 @@ void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 
 	void driverMoteurElevation(uint8_t y){
 		lcd_set_cursor_position(8, 1);		
-		if(y == 255){ 		
+		if(y == PUISSANCE_MAX){ 		
 			PORTB = clear_bit(PORTB, 0);
-			pwm2_set_PD6(255);		
+			pwm2_set_PD6(PUISSANCE_MAX);		
 		}
 		else if ( y ==0){		
 			PORTB = set_bit(PORTB, 0);
-			pwm2_set_PD6(255);	
+			pwm2_set_PD6(PUISSANCE_MAX);	
 		}
 		else {		
 			pwm2_set_PD6(0);
@@ -203,15 +201,21 @@ void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 	*/
 	
 	void driverServoMoteur(uint8_t bouton){
-	/*if (bouton)
-	{
-		pwm1_set_PD5(9999);
-		pwm1_set_PD5(9999);
-	    pwm1_set_PD5(9999);
+	if (bouton && clock1 >= 60 && memoire == 0){
+		memoire = 1;
+	}
+	else if (clock1 >= 60 && memoire == 1){
+		pwm1_set_PD5(1250);	
+		clock3++;
+	} 
+	else if(clock3 >= DELAIS_SERVO_MOTEUR){
+		clock1 = 0;
+		clock3 = 0;
+		memoire = 0;
 	}
 	else
-		pwm1_set_PD5(2300);	*/
-	}
+		pwm1_set_PD5(2300);	
+}
 
 	/*
 	* Driver Roue Inertie
@@ -228,7 +232,6 @@ void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 	*
 	*/
 	void driverMoteurRoueInertie(uint8_t bouton){
-
 		if (bouton){
 			if(clock2 < DELAIS_DEPART_ROUE_INERTIE){
 			pwm2_set_PD7(PUISSANCE_MAX);
@@ -236,14 +239,13 @@ void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 			}
 			else if(clock2 >= DELAIS_DEPART_ROUE_INERTIE){
 			pwm2_set_PD7(PUISSANCE_MOTEUR_ROUE_INERTIE);
-			clock++;
+			clock1++;
 			}
 		}
 		else {
 			pwm2_set_PD7(0);
-			clock = RESET_CLOCK;
-			clock2 = RESET_CLOCK;
-			
+			clock1 = RESET_CLOCK;
+			clock2 = RESET_CLOCK;	
 		}
 	}
 

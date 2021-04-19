@@ -34,6 +34,7 @@ int main(void){
 
 
 	sei();
+
 	
 	//*******Uint******
 	uint8_t x = 0;						// Position Joystick X
@@ -49,18 +50,11 @@ int main(void){
 	char message[40] = {'\0'};
 	char str    [40] = {'\0'};
 	
-	
-	
-	
-	DDRB = clear_bits(DDRB, 0b0001111);
-	DDRB = set_bits(DDRB, 0b0001111);
+		
+	DDRB = clear_bits(DDRB, 0b0001111);	// REFACTOR
+	DDRB = set_bits(DDRB, 0b0001111);	// REFACTOR
 
-	//DDRD = clear_bits(DDRD, 0b1111111);
-	//DDRD = set_bits(DDRD, 0b1111111);
-	//Test pour vérifier l'affichage et le rafraîchissement
-	
-	
-	
+		
 	while (1)
 	{
 		
@@ -83,13 +77,11 @@ int main(void){
 				if(mode == 1){
 					setRotation(x,z);	
 					driverLanceur(moteurLanceur,servoMoteurLanceur,y);	
-                    pwm1_set_PD5(1250);		
 				}					
 				//Mode déplacement (le véhicule peut avancer, reculer, tourner)
 				else if(mode == 0){
 					setDeplacement(joystick, x, z);	
 					driverLanceur(moteurLanceur,servoMoteurLanceur,y);
-                    pwm1_set_PD5(2300);	
 					}
 				//Si problème alors le véhicule arrête de bouger
 				else {
