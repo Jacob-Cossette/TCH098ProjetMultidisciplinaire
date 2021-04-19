@@ -1,4 +1,4 @@
-main.d main.o: .././main.c \
+vehicule.d vehicule.o: .././vehicule.c \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -10,16 +10,14 @@ main.d main.o: .././main.c \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\version.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h \
+ f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
+ f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h \
+ f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdarg.h \
+ f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
- f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h \
- .././driver.h .././utils.h .././lcd.h .././fifo.h .././uart.h \
- f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h \
- f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h \
- f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h \
- f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdarg.h \
- .././vehicule.h
+ .././lcd.h .././utils.h .././driver.h .././uart.h .././vehicule.h
 
 f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -43,30 +41,26 @@ f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\f
 
 f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\lock.h:
 
+f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
+
+f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
+
+f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdarg.h:
+
+f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h:
+
 f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h:
 
 f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h:
 
 f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h:
 
-f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\interrupt.h:
-
-.././driver.h:
+.././lcd.h:
 
 .././utils.h:
 
-.././lcd.h:
-
-.././fifo.h:
+.././driver.h:
 
 .././uart.h:
-
-f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\string.h:
-
-f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stddef.h:
-
-f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h:
-
-f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdarg.h:
 
 .././vehicule.h:

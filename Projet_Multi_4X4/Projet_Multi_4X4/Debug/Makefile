@@ -42,7 +42,8 @@ C_SRCS +=  \
 ../lcd.c \
 ../main.c \
 ../uart.c \
-../utils.c
+../utils.c \
+../vehicule.c
 
 
 PREPROCESSING_SRCS += 
@@ -57,7 +58,8 @@ fifo.o \
 lcd.o \
 main.o \
 uart.o \
-utils.o
+utils.o \
+vehicule.o
 
 OBJS_AS_ARGS +=  \
 driver.o \
@@ -65,7 +67,8 @@ fifo.o \
 lcd.o \
 main.o \
 uart.o \
-utils.o
+utils.o \
+vehicule.o
 
 C_DEPS +=  \
 driver.d \
@@ -73,7 +76,8 @@ fifo.d \
 lcd.d \
 main.d \
 uart.d \
-utils.d
+utils.d \
+vehicule.d
 
 C_DEPS_AS_ARGS +=  \
 driver.d \
@@ -81,7 +85,8 @@ fifo.d \
 lcd.d \
 main.d \
 uart.d \
-utils.d
+utils.d \
+vehicule.d
 
 OUTPUT_FILE_PATH +=Projet_Multi_4X4.elf
 
@@ -133,6 +138,13 @@ LINKER_SCRIPT_DEP+=
 	
 
 ./utils.o: .././utils.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)F:\Logiciels\AtmelStudio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DF_CPU=8000000UL  -I"F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega324a -B "F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega324a" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+./vehicule.o: .././vehicule.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)F:\Logiciels\AtmelStudio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DF_CPU=8000000UL  -I"F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega324a -B "F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega324a" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

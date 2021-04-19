@@ -36,9 +36,17 @@ static uint16_t clock2 = 0;
 static uint16_t clock = 0;
 
 
+/************************************************************************/
+/*                 DRIVER MOUVEMENT 4X4                                   */
+/************************************************************************/
 
-
-//mode rotation
+/*
+* Méthode qui permet le sotation du mode 2
+*
+* Parametre : X sens de rotation 
+* Parametre : Z Rapiditer de la rotation  
+*
+*/
 void setRotation (uint8_t x, uint8_t z){
 			if (x >= 200){
 				DDRB = clear_bits(DDRB, 0b0000110);
@@ -206,6 +214,17 @@ void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 	}
 
 	/*
+	* Driver Roue Inertie
+	*
+	* Strategie : Controle de la roue d'inertie est activer avec le bouton sw2.
+	* SW2 active la séquence d'initialisation de la roue d'inertie. cette séquence 
+	* commence par activer la roue à une puissance maximal pour pour atteindre 
+	* la vitesse de rotation nominal rapidement. Par la suite, le moteur continuer 
+	* la rotation à vitesse normal. La clock2 permet d'ajuster le temps de rotation 
+	* a MAXp et la clock permet de connaitre le temps de rotation depuis le dernier 
+	* tirs
+	*
+	* Parametre : Bonton switch 2
 	*
 	*/
 	void driverMoteurRoueInertie(uint8_t bouton){

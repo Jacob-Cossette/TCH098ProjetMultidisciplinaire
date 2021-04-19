@@ -38,6 +38,7 @@ void driverMoteurElevation(uint8_t y);
 //Driver pour le Servo Moteur de poucer des disques
 void driverServoMoteur(uint8_t bouton);
 
+//Driver Roue Inertie
 void driverMoteurRoueInertie(uint8_t bouton);
 
 #endif
