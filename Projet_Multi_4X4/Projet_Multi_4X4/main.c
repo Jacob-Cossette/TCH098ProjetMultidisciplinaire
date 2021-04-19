@@ -17,11 +17,11 @@
 #include "uart.h"
 #include <string.h>
 #include <stdio.h>
+#include "vehicule.h"
 
+void display_heartbeat();
 
-
-
-
+//extern uint16_t clock;
 
 int main(void){
 	
@@ -29,25 +29,21 @@ int main(void){
 	uart_init(UART_0);
 	lcd_init();
 	pwm0_init();
+	pwm1_init(20000);
 	pwm2_init();
-	pwm6_
-	setPuissanceMoteurRoue ();
-	setRotation();
+
 
 	sei();
 	
 	//*******Uint******
-	uint8_t x = 0;			// Position Joystick x
-	uint8_t y = 0;			// Position Joystick y
-	uint8_t z = 0;			// Position potentiomètre
-	uint8_t mode = 0;		// Variable selection des mondes 1: Déplacement 2: Tir sw1
-	uint8_t moteurLanceur = 0;	// Activation du moteur de tir sw2
-	uint8_t servoMoteurLanceur = 0;		// Activation du servo-moteur tir sw3
-	uint8_t joystick = 0;	// Bouton JoyStick pour R et D
+	uint8_t x = 0;						// Position Joystick X
+	uint8_t y = 1;						// Position Joystick Y
+	uint8_t z = 0;						// Position potentiomètre
+	uint8_t mode = 0;					// Variable selection des mondes 1: Déplacement 2: Tir SW1
+	uint8_t moteurLanceur = 0;			// Activation du moteur de tir SW2
+	uint8_t servoMoteurLanceur = 0;		// Activation du servo-moteur tir SW3
+	uint8_t joystick = 0;				// Bouton JoyStick pour R et D
 	
-	
-	//****Constante*****
-	const uint8_t PUISSANCE_MAX = 255;
 	
 	//******Strings*****
 	char message[40] = {'\0'};
@@ -55,8 +51,12 @@ int main(void){
 	
 	
 	
-	DDRB = clear_bits(DDRB, 0b0000111);
+	
+	DDRB = clear_bits(DDRB, 0b0001111);
+	DDRB = set_bits(DDRB, 0b0001111);
 
+	//DDRD = clear_bits(DDRD, 0b1111111);
+	//DDRD = set_bits(DDRD, 0b1111111);
 	//Test pour vérifier l'affichage et le rafraîchissement
 	
 	
@@ -64,155 +64,40 @@ int main(void){
 	while (1)
 	{
 		
-// Lecture de donnee envoyer
-
+		// Lecture des données reçues par le véhicule
 		if (!uart_is_rx_buffer_empty(UART_0)){
-			//if(uart_get_byte(UART_0) =='X'){
+
 				lcd_clear_display();
 				_delay_ms(20);
 				uart_get_string(UART_0,message,151);
 
-				sscanf(message,  "X%03dY%03dZ%03dm%dM%dL%dD%d\0", &x, &y, &z, &mode, &moteurLanceur, &servoMoteurLanceur, &joystick);
+				sscanf(message,  "X%03dY%03dZ%03dm%dM%dL%dD%d", &x, &y, &z, &mode, &moteurLanceur, &servoMoteurLanceur, &joystick);
 				//sprintf(str, "%s", message);
 				
-				sprintf(str, "X%03dY%03dZ%03dm%dM%dL%dD%d\0", x, y, z, mode, moteurLanceur, servoMoteurLanceur, joystick);
+				sprintf(str, "X%03dY%03dZ%03dm%dM%dL%dD%d", x, y, z, mode, moteurLanceur, servoMoteurLanceur, joystick);
 				lcd_set_cursor_position(0,0);
 
 				lcd_write_string(str);
-		
-			
-		}
-		
-		switch (mode)
-		{case 1:
-		 	driverDirection ();
-			driverLanceur( sw2, sw3,  y);
-		case 0:
-		
-		// changer la variable moteur pour diration R --> arrier D --> Avant
-		// NOTE :  ceci est un brouillon
-		if(joystick == 1){
-			
-				DDRB = clear_bits(DDRB, 0b0000011);
-				//PB1 = 1 PB2 = 1 Alors la direction est vers l<avant 
-				PORTB = set_bit(DDRB, 3);
-				setPuissanceMoteurRoue(z);
-		}
-		else if (joystick == 0){
-				DDRB = clear_bits(DDRB, 0b0000011);
-				PORTB = set_bit(DDRB,0);
-				setPuissanceMoteurRoue(z);
-			}
-			
-		else{
-				setPuissanceMoteurRoue(0);
-			}
-			break;
-		}
-	
-	
-		
+						
+				//Mode rotation (le véhicule tourne sur lui-même par la gauche ou par la droite)
+				if(mode == 1){
+					setRotation(x,z);	
+					driverLanceur(moteurLanceur,servoMoteurLanceur,y);	
+                    pwm1_set_PD5(1250);		
+				}					
+				//Mode déplacement (le véhicule peut avancer, reculer, tourner)
+				else if(mode == 0){
+					setDeplacement(joystick, x, z);	
+					driverLanceur(moteurLanceur,servoMoteurLanceur,y);
+                    pwm1_set_PD5(2300);	
+					}
+				//Si problème alors le véhicule arrête de bouger
+				else {
+					setPuissanceMoteurRoue(0);
+				}
+		}	
 	display_heartbeat();		
 	}
-
 }
-	void setRotation(uint8_t valeur){	
-	}
-	
-	
-	void setPuissanceMoteurRoue (uint8_t valeur){
-		pwm0_set_PB3(valeur);
-		pwm0_set_PB4(valeur);
-	}
-	
-	void display_heartbeat(void) {
-		static uint8_t heartbeat = 'Z';
-		heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat + 1);
-		lcd_set_cursor_position(15, 1);
-		lcd_write_char(heartbeat);
-		//uart_put_byte(UART_0, heartbeat);
-	}
 
-
-
-/************************************************************************/
-/*                 DRIVER LANCEUR 4X4                                   */
-/************************************************************************/
-/*
-* Fonction Initialise les différents drivers utiliser dans la Fonction Lancer du 
-* vehicule 4X4
-*
-* Fait appel au driver du moetru RI Servo Moteur et moteur d elevation.
-*
-*Parametre uint8_t sw2 : Bouton sw2 circuit_mannette
-*Parametre uint8_t sw3 : Bouton sw3 circuit_mannette
-*Parametre uint8_t y   : Joystick y cicuit_mannette
-*
-*/
-	void driverLanceur(uint8_t sw2,uint8_t sw3, uint8_t y)    {
-		driverMoteurElevation(y);
-		driverServoMoteur(sw3);
-		
-		
-		driverMoteurRoueInertie(sw2);
-	}
 	
-	
-/*
-* Driver Pour le moteur d elevation
-* 
-* Strategie : L objectif est d activer le moteur d elevation de la platforme
-* de tir. Le courant fournie est constant et est activer par l axe Y du joystick. 
-* il est utilise comme une switch ou son etaps max et min est utilise pour 
-* represente un 1 ( MAX ou MIN ) et un 0 lorsque Y = 127. Finalement la position 
-* y = 255 fait elever la platform et Y = 0 fait descendre la platforme.
-*
-* Parametre uint8_t y   : Joystick y cicuit_mannette
-*/	
-	void driverMoteurElevation(uint8_t y){
-		if(y == 255){
-			PORTB = clear_bits(DDRB,0b10000000);
-			PORTD = set_bit(DDRD,6)
-			PORTB = set_bit(DDRB,0);
-			pwm6_set_PB0(PUISSANCE_MAX);
-			
-		}
-		else if ( y ==0){
-			PORTD = clear_bit(DDRD,6)
-			PORTB = set_bit(DDRB,0);
-			pwm6_set_PB0(PUISSANCE_MAX);
-			
-		}	
-		else {
-			pwm6_set_PB0(PUISSANCE_MAX);
-		}		
-		
-			DDRB = clear_bits(DDRB, 0b0000011);
-			PORTB = set_bit(DDRB, 2);
-	}
-	
-/*
-* Driver pour le Servo Moteur de poucer des disques  
-*
-* Strategie : Controle du servomoteur, Active une sequence du de tir 
-* du disque courant. la methode doit mettre en place une securite
-* qui empeche l utilisateur d effectuer une demande de tirs tant que
-* le tirs n est pas effectue et que la roue d inertie n est pas a 
-* vitesse nominal.
-*
-* interogation : est-il possible de mettre un decompte sur la mannette 
-* ou  de continuer a utiliser le 4X4 durant le temps d attente.
-*
-* Parametre uint8_t sw3 : Bouton sw3 circuit_mannette
-*/
-	
-	void driverServoMoteur(uint8_t bouton){
-		
-	}
-
-/*
-*
-*/
-	void driverMoteurRoueInertie(uint8_t bouton, unint16_t clock){
-		clock++;
-	}
