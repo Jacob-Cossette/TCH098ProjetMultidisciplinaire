@@ -774,9 +774,9 @@ END GROUP
  .text.setPuissanceMoteurRoue
                 0x00000b84       0x12 vehicule.o
                 0x00000b84                setPuissanceMoteurRoue
- .text.setRotation
+ .text.driverRotation
                 0x00000b96       0x38 vehicule.o
-                0x00000b96                setRotation
+                0x00000b96                driverRotation
  .text.setPuissance_gauche
                 0x00000bce       0xf8 vehicule.o
                 0x00000bce                setPuissance_gauche
@@ -786,9 +786,9 @@ END GROUP
  .text.setPuissance_tourner
                 0x00000dbe       0x1c vehicule.o
                 0x00000dbe                setPuissance_tourner
- .text.setDeplacement
+ .text.driverDeplacement
                 0x00000dda       0x32 vehicule.o
-                0x00000dda                setDeplacement
+                0x00000dda                driverDeplacement
  .text.display_heartbeat
                 0x00000e0c       0x24 vehicule.o
                 0x00000e0c                display_heartbeat
@@ -1130,7 +1130,7 @@ END GROUP
  .debug_frame   0x00000600      0x314 utils.o
  .debug_frame   0x00000914      0x170 vehicule.o
 
-.debug_str      0x00000000      0xe45
+.debug_str      0x00000000      0xe4b
  *(.debug_str)
  .debug_str     0x00000000      0x255 F:/Logiciels/AtmelStudio/7.0/Packs/atmel/ATmega_DFP/1.6.364/gcc/dev/atmega324a/avr5/crtatmega324a.o
  .debug_str     0x00000255      0x200 driver.o
@@ -1139,14 +1139,14 @@ END GROUP
                                 0x256 (size before relaxing)
  .debug_str     0x000004ff      0x2d6 lcd.o
                                 0x4a6 (size before relaxing)
- .debug_str     0x000007d5       0xed main.o
-                                0x332 (size before relaxing)
- .debug_str     0x000008c2      0x2a1 uart.o
+ .debug_str     0x000007d5       0xf3 main.o
+                                0x338 (size before relaxing)
+ .debug_str     0x000008c8      0x2a1 uart.o
                                 0x540 (size before relaxing)
- .debug_str     0x00000b63      0x181 utils.o
+ .debug_str     0x00000b69      0x181 utils.o
                                 0x3c0 (size before relaxing)
- .debug_str     0x00000ce4      0x161 vehicule.o
-                                0x3f3 (size before relaxing)
+ .debug_str     0x00000cea      0x161 vehicule.o
+                                0x3f9 (size before relaxing)
 
 .debug_loc      0x00000000     0x2d82
  *(.debug_loc)

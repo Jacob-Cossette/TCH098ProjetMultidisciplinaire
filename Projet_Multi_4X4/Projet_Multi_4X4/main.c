@@ -75,12 +75,12 @@ int main(void){
 						
 				//Mode rotation (le véhicule tourne sur lui-même par la gauche ou par la droite)
 				if(mode == 1){
-					setRotation(x,z);	
+					driverRotation(x,z);	
 					driverLanceur(moteurLanceur,servoMoteurLanceur,y);	
 				}					
 				//Mode déplacement (le véhicule peut avancer, reculer, tourner)
 				else if(mode == 0){
-					setDeplacement(joystick, x, z);	
+					driverDeplacement(joystick, x, z);	
 					driverLanceur(moteurLanceur,servoMoteurLanceur,y);
 					}
 				//Si problème alors le véhicule arrête de bouger

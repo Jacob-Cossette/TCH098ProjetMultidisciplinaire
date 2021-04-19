@@ -8,7 +8,7 @@
 #define __EQUIPE43_VEHICULE__
 
 //Mode rotation
-void setRotation (uint8_t x, uint8_t z);
+void driverRotation (uint8_t x, uint8_t z);
 
 //Set puissance moteur
 void setPuissanceMoteurRoue (uint8_t valeur);
@@ -16,17 +16,14 @@ void setPuissanceMoteurRoue (uint8_t valeur);
 //Variation de vitesse pour tourner vers la gauche
 void setPuissance_gauche (uint8_t x, uint8_t z);
 
-
 //Variation de vitesse pour tourner vers la droite
 void setPuissance_droite (uint8_t x, uint8_t z);
-
 
 //Variation de vitesse pour tourner (droite et gauche)
 void setPuissance_tourner (uint8_t x, uint8_t z);
 
-
 //Fonction pour déplacer le véhicule (tourner et reculer/avancer)
-void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z);
+void driverDeplacement(uint8_t joystick, uint8_t x, uint8_t z);
 
 /*Fonction Initialise les différents drivers utiliser dans la Fonction Lancer du
 vehicule 4X4*/

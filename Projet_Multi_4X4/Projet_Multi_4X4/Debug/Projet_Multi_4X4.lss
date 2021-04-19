@@ -23,11 +23,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  00000a84  00000000  00000000  0000838c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000e45  00000000  00000000  00008e10  2**0
+ 10 .debug_str    00000e4b  00000000  00000000  00008e10  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00002d82  00000000  00000000  00009c55  2**0
+ 11 .debug_loc    00002d82  00000000  00000000  00009c5b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000308  00000000  00000000  0000c9d7  2**0
+ 12 .debug_ranges 00000308  00000000  00000000  0000c9dd  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -1469,10 +1469,10 @@ int main(void){
      7f0:	8c 81       	ldd	r24, Y+4	; 0x04
      7f2:	81 30       	cpi	r24, 0x01	; 1
      7f4:	51 f4       	brne	.+20     	; 0x80a <__DATA_REGION_LENGTH__+0xa>
-					setRotation(x,z);	
+					driverRotation(x,z);	
      7f6:	6b 81       	ldd	r22, Y+3	; 0x03
      7f8:	89 81       	ldd	r24, Y+1	; 0x01
-     7fa:	0e 94 cb 05 	call	0xb96	; 0xb96 <setRotation>
+     7fa:	0e 94 cb 05 	call	0xb96	; 0xb96 <driverRotation>
 					driverLanceur(moteurLanceur,servoMoteurLanceur,y);	
      7fe:	4a 81       	ldd	r20, Y+2	; 0x02
      800:	6e 81       	ldd	r22, Y+6	; 0x06
@@ -1484,11 +1484,11 @@ int main(void){
 				else if(mode == 0){
      80a:	81 11       	cpse	r24, r1
      80c:	0b c0       	rjmp	.+22     	; 0x824 <__DATA_REGION_LENGTH__+0x24>
-					setDeplacement(joystick, x, z);	
+					driverDeplacement(joystick, x, z);	
      80e:	4b 81       	ldd	r20, Y+3	; 0x03
      810:	69 81       	ldd	r22, Y+1	; 0x01
      812:	8f 81       	ldd	r24, Y+7	; 0x07
-     814:	0e 94 ed 06 	call	0xdda	; 0xdda <setDeplacement>
+     814:	0e 94 ed 06 	call	0xdda	; 0xdda <driverDeplacement>
 					driverLanceur(moteurLanceur,servoMoteurLanceur,y);
      818:	4a 81       	ldd	r20, Y+2	; 0x02
      81a:	6e 81       	ldd	r22, Y+6	; 0x06
@@ -2020,15 +2020,15 @@ void setPuissanceMoteurRoue (uint8_t valeur){
      b92:	cf 91       	pop	r28
      b94:	08 95       	ret
 
-00000b96 <setRotation>:
+00000b96 <driverRotation>:
 * Parametre : X sens de rotation 
 * Parametre : Z Rapiditer de la rotation  
 *
 */
-void setRotation (uint8_t x, uint8_t z){
+void driverRotation (uint8_t x, uint8_t z){
 			if (x >= 200){
      b96:	88 3c       	cpi	r24, 0xC8	; 200
-     b98:	50 f0       	brcs	.+20     	; 0xbae <setRotation+0x18>
+     b98:	50 f0       	brcs	.+20     	; 0xbae <driverRotation+0x18>
 				DDRB = clear_bits(DDRB, 0b0000110); // REFACTOR
      b9a:	84 b1       	in	r24, 0x04	; 4
      b9c:	89 7f       	andi	r24, 0xF9	; 249
@@ -2044,7 +2044,7 @@ void setRotation (uint8_t x, uint8_t z){
 			}
 			else if (x <= 100){
      bae:	85 36       	cpi	r24, 0x65	; 101
-     bb0:	50 f4       	brcc	.+20     	; 0xbc6 <setRotation+0x30>
+     bb0:	50 f4       	brcc	.+20     	; 0xbc6 <driverRotation+0x30>
 				DDRB = clear_bits(DDRB, 0b0000110);	// REFACTOR
      bb2:	84 b1       	in	r24, 0x04	; 4
      bb4:	89 7f       	andi	r24, 0xF9	; 249
@@ -2356,17 +2356,17 @@ void setPuissance_tourner (uint8_t x, uint8_t z){
      dd4:	0e 94 c2 05 	call	0xb84	; 0xb84 <setPuissanceMoteurRoue>
      dd8:	08 95       	ret
 
-00000dda <setDeplacement>:
+00000dda <driverDeplacement>:
 }
 
 
 
 //fonction pour déplacer le véhicule (tourner et reculer/avancer)
-void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
+void driverDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
      dda:	96 2f       	mov	r25, r22
 		if (joystick == 1){
      ddc:	81 30       	cpi	r24, 0x01	; 1
-     dde:	41 f4       	brne	.+16     	; 0xdf0 <setDeplacement+0x16>
+     dde:	41 f4       	brne	.+16     	; 0xdf0 <driverDeplacement+0x16>
 			PORTB = clear_bits(DDRB, 0b0000110);	// REFACTOR
      de0:	84 b1       	in	r24, 0x04	; 4
      de2:	89 7f       	andi	r24, 0xF9	; 249
@@ -2379,7 +2379,7 @@ void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 		}
 		else if(joystick == 0){
      df0:	81 11       	cpse	r24, r1
-     df2:	08 c0       	rjmp	.+16     	; 0xe04 <setDeplacement+0x2a>
+     df2:	08 c0       	rjmp	.+16     	; 0xe04 <driverDeplacement+0x2a>
 			PORTB = set_bits(DDRB, 0b0000110);		// REFACTOR
      df4:	84 b1       	in	r24, 0x04	; 4
      df6:	86 60       	ori	r24, 0x06	; 6

@@ -48,7 +48,7 @@ static uint8_t memoire = 0;
 * Parametre : Z Rapiditer de la rotation  
 *
 */
-void setRotation (uint8_t x, uint8_t z){
+void driverRotation (uint8_t x, uint8_t z){
 			if (x >= 200){
 				DDRB = clear_bits(DDRB, 0b0000110); // REFACTOR
 				PORTB = set_bit(DDRB, 2);			// REFACTOR
@@ -127,7 +127,7 @@ void setPuissance_tourner (uint8_t x, uint8_t z){
 
 
 //fonction pour déplacer le véhicule (tourner et reculer/avancer)
-void setDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
+void driverDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 		if (joystick == 1){
 			PORTB = clear_bits(DDRB, 0b0000110);	// REFACTOR
 			setPuissance_tourner (x,z);
