@@ -1,33 +1,111 @@
 /*
- *OBJECTIF: Concevoir et réaliser un véhicule télécommandé pouvant lancer des petits
- *	disques sur des cibles ainsi que sa manette de contrôle dans un délai de 15 semaines. 
- *	Par la suite, vous ferez la démonstration des performances de votre prototype lors d’
- *	une compétition organisée durant la période des examens finaux. La suite du cahier des 
- *	charges décrit les conditions et contraintes auxquelles votre projet devra répondre.
+ * main.c
  *
- * Projet_Multi.c
- *
- * Created: 3/4/2021 12:03:21 PM
- * Author : Jacob
+ * Created: 2021-02-04 15:34:18
+ * Author : Jing Tong Chen
  */ 
 
+
+
+#if(1)
 #include <avr/io.h>
+#include <avr/interrupt.h>
+#include <stdio.h>    		 // sprintf
+#include <util/delay.h>
+#include "lcd.h"
+#include "utils.h"			// set_bit
+#include "driver.h"
+#include "uart.h"
+
+#include "manette.h"		//nouveau module crï¿½ï¿½
 
 
 int main(void)
 {
-    /* Replace with your application code */
-    while (1) 
-    {
-    }
+	//Dï¿½claration des variables
+
+	//Variables envoyï¿½es au vï¿½hicule
+	uint8_t x;					//joystick en x
+	uint8_t y;					//joystick en y
+	uint8_t inclinaison;		//potentiomï¿½tre linï¿½aire
+
+	uint8_t mode = 0;			//(0 = Dï¿½PLACEMENT, 1 = ROTATION)
+	uint8_t moteur = 0;			//(1 = en marche, 1 = fermï¿½)
+	uint8_t lancer = 0;			//(1 = lancer munition, 0 = ne pas lancer munition)
+	
+	//Variables intermï¿½diaires servant aux calculs 
+	uint8_t etat_mode = 0;
+	uint8_t etat_moteur = 0;
+	uint8_t etat_lance = 0;
+	
+	
+	uint8_t del = 0b00011111; //Nombres de munitions (Max = 5 && 0b00011111 => 5)
+
+	char str[40]; // Message envoyï¿½ au vï¿½hicule
+	
+	
+	//initialisation
+	lcd_init();
+	adc_init();
+	uart_init(UART_0);
+	
+	sw_init();
+	DDRB=set_bits(DDRB,0b00011111);
+
+	sei();
+
+	//Dï¿½but de l'exï¿½cution
+	while(1){
+		
+		lcd_clear_display();
+		
+		//Dï¿½terminer si vï¿½hicule est en mode Dï¿½PLACEMENT ou ROTATION avec la SW1
+		lire_mode(&mode, PD7, &etat_mode);
+		
+		//Dï¿½terminer si le moteur du frisbee est activï¿½
+		//Le moteur du lance frisbee ne peut ï¿½tre activï¿½ s'il n'y a plus de munitions
+		if (del){
+			lire_mode(&moteur, PD6, &etat_moteur);
+		}
+		else
+		{
+		moteur = 0;
+		etat_moteur = 0;
+		}
+		
+		//Afficher sur LCD l'ï¿½tat du moteur de lance-frisbee et le mode (Dï¿½PLACEMENT ou ROTATION)
+		display_mode(mode, moteur);
+		
+		//Test pour vï¿½rifier l'affichage et le rafraï¿½chissement
+		display_heartbeat();
+		
+		//Lire et afficher l'inclinaison sur LCD
+		lire_potentiometres(&x, &y, &inclinaison);
+		afficher_potentiometres(x, y, inclinaison);
+		
+		//Lancer munition si le moteur du lance-frisbee est activï¿½
+		if (moteur){
+			lire_etat_lancer(&lancer, &etat_lance, &del);
+
+			//Afficher le nombre de munitions sur DEL
+			PORTB=clear_bits(PORTB,0b00011111);
+			PORTB=set_bits(PORTB,del);
+		}
+		
+		//Message envoyï¿½ au vï¿½hicule en string
+		sprintf(str, "X%03dY%03dZ%03dm%dM%dL%dD%d\n", x, y, inclinaison, mode, moteur, lancer, del);
+		uart_put_string(UART_0,str);
+		
+		_delay_ms(100);
+		
+		
+
+	}
+	
+	
 }
 
 void display_heartbeat(void) {
 	static uint8_t heartbeat = 'Z';
 
-	heartbeat = (heartbeat == 'Z') ? ('A') : (heartbeat + 1);
-
-	lcd_set_cursor_position(15, 1);
-	lcd_write_char(heartbeat);
-
-}
+#endif

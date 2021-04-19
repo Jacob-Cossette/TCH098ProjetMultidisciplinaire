@@ -5,7 +5,7 @@
 
 	MIT License
 
-	Copyright (c) 2018	École de technologie supérieure
+	Copyright (c) 2018	Ã‰cole de technologie supÃ©rieure
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -18,9 +18,9 @@
 */
 /**
 	\file
-	\brief Code source de fonctions qui pilotent directement du matériel
+	\brief Code source de fonctions qui pilotent directement du matÃ©riel
 
-	\author Noms de membres de l'équipe
+	\author Noms de membres de l'Ã©quipe
 	\author idem
 	\author idem
 	\author idem
@@ -42,24 +42,24 @@ Function definition
 
 void adc_init(void){
 
-	// 1-Configuration des broches du port A à mettre en entrée
-	DDRA = clear_bit(DDRA, PA0);  //Décommenter pour utiliser
-	DDRA = clear_bit(DDRA, PA1);  //Décommenter pour utiliser
-	DDRA = clear_bit(DDRA, PA2); //Décommenter pour utiliser
-	DDRA = clear_bit(DDRA, PA3); //Décommenter pour utiliser
-	DDRA = clear_bit(DDRA, PA4); //Décommenter pour utiliser
+	// 1-Configuration des broches du port A Ã  mettre en entrÃ©e
+	DDRA = clear_bit(DDRA, PA0);  //DÃ©commenter pour utiliser
+	DDRA = clear_bit(DDRA, PA1);  //DÃ©commenter pour utiliser
+	DDRA = clear_bit(DDRA, PA2); //DÃ©commenter pour utiliser
+	DDRA = clear_bit(DDRA, PA3); //DÃ©commenter pour utiliser
+	DDRA = clear_bit(DDRA, PA4); //DÃ©commenter pour utiliser
 	
 	
-	// 2-Sélectionner la référence de tension: la tension d'alimentation
+	// 2-SÃ©lectionner la rÃ©fÃ©rence de tension: la tension d'alimentation
 	ADMUX = clear_bit(ADMUX, REFS1);
 	ADMUX = set_bit(ADMUX, REFS0);
 
-	// 3-Choisir le format du résultat de conversion: shift a gauche pour que
+	// 3-Choisir le format du rÃ©sultat de conversion: shift a gauche pour que
 	// les 8 MSB se retrouvent dans le registre ADCH (ADLAR=1)
 	ADMUX = set_bit(ADMUX, ADLAR);
 
 	// 4-Choisir le facteur de division de l'horloge
-	// ( L'horloge l'ADC ne doit pas dépasser 200kHz. Avec une horloge de 8MHZ, ça
+	// ( L'horloge l'ADC ne doit pas dÃ©passer 200kHz. Avec une horloge de 8MHZ, Ã§a
 	// prend une division d'horloge de min 40. Donc 64 ou 128) */
 	ADCSRA = set_bit(ADCSRA, ADPS2);
 	ADCSRA = set_bit(ADCSRA, ADPS1);
@@ -71,21 +71,21 @@ void adc_init(void){
 
 uint8_t adc_read(uint8_t canal){
 
-// 1-Sélection de l'entrée à convertir (canal)
+// 1-SÃ©lection de l'entrÃ©e Ã  convertir (canal)
 ADMUX = write_bits(ADMUX, 0b00000111, canal);
 
-// 2-Démarrage d'une conversion
+// 2-DÃ©marrage d'une conversion
 ADCSRA = set_bit(ADCSRA, ADSC);
 
 // 3-Attente de la fin de conversion
-//TODO : Avec une boucle, regarder le bit ASC tant que ce n'es aps terminé
+//TODO : Avec une boucle, regarder le bit ASC tant que ce n'es aps terminÃ©
 
 uint8_t val=1;
 while(val==1){
 	val = read_bit(ADCSRA, ADSC);
 }
 
-// 4-Lecture et renvoi du résultat
+// 4-Lecture et renvoi du rÃ©sultat
 return ADCH;
 	
 }
@@ -96,7 +96,7 @@ void pwm0_init(void){
 
 	
 	// 1.1-Mettre les broches de la modulation de largeur d'impulsion en sortie
-	
+//TODO_FB : Active PB1 et PB2 en sortie
 	DDRB = set_bit(DDRB,PB4); // pb4 = 1
 	DDRB = set_bit(DDRB,PB3); // pb3 = 1
 	
@@ -117,11 +117,11 @@ void pwm0_init(void){
 	TCCR0A = set_bit(TCCR0A,WGM00);
 	TCCR0A = clear_bit(TCCR0A,WGM01);
 	
-	// 2.3- Fixer la valeur initiale du compteur 0 à 0
+	// 2.3- Fixer la valeur initiale du compteur 0 Ã  0
 	
 	 TCNT0 = 0;
 	
-	// 2.4- Facteur de division de fréquence : 1
+	// 2.4- Facteur de division de frÃ©quence : 1
 	
 	TCCR0B = set_bit(TCCR0B,CS00);
 	TCCR0B = clear_bit(TCCR0B,CS01);
@@ -130,7 +130,7 @@ void pwm0_init(void){
 
 void pwm0_set_PB3(uint8_t duty){
 
-	// Fixer le rapport cyclique à la valeur de duty
+	// Fixer le rapport cyclique Ã  la valeur de duty
 	OCR0A = duty; 
 	
 }
@@ -138,7 +138,7 @@ void pwm0_set_PB3(uint8_t duty){
 
 void pwm0_set_PB4(uint8_t duty){
 
-	// Fixer le rapport cyclique à la valeur de duty
+	// Fixer le rapport cyclique Ã  la valeur de duty
 	OCR0B = duty;
 }
 
@@ -154,13 +154,13 @@ void pwm1_init(uint16_t top){
 	TCCR1A=set_bit(TCCR1A,COM1B1);
 	TCCR1A=clear_bit(TCCR1A,COM1B0);
 	
-	// Fast PWM mode (avec valeur TOP fixé par ICR1)
+	// Fast PWM mode (avec valeur TOP fixÃ© par ICR1)
 	TCCR1B=set_bit(TCCR1B,WGM13);
 	TCCR1B=set_bit(TCCR1B,WGM12);
 	TCCR1A=set_bit(TCCR1A,WGM11);
 	TCCR1A=clear_bit(TCCR1A,WGM10);
 
-	// valeur initiale du compteur à 0
+	// valeur initiale du compteur Ã  0
 	TCNT1=0;
 
 	// fixer la valeur maximale (TOP) du compteur 2	
@@ -181,6 +181,7 @@ void pwm1_set_PD4(uint16_t limit){
 
 void pwm2_init(){
 	// broches de PWM en sortie
+//TODO_FB : Active PB0 en sortie
 	DDRD = set_bit(DDRD, PD6);
 	DDRD = set_bit(DDRD, PD7);
 	
@@ -203,11 +204,11 @@ void pwm2_init(){
 	TCCR2A = set_bit(TCCR2A,WGM00);
 	TCCR2A = clear_bit(TCCR2A,WGM01);
 	
-	// 2.3- Fixer la valeur initiale du compteur 0 à 0
+	// 2.3- Fixer la valeur initiale du compteur 0 Ã  0
 	
 	TCNT2 = 0;
 	
-	// 2.4- Facteur de division de fréquence : 1
+	// 2.4- Facteur de division de frÃ©quence : 1
 	
 	TCCR2B = set_bit(TCCR2B,CS00);
 	TCCR2B = clear_bit(TCCR2B,CS01);
@@ -217,12 +218,12 @@ void pwm2_init(){
 
 
 void pwm2_set_PD7(uint8_t limit){
-	// Fixer le rapport cyclique à la valeur de duty
+	// Fixer le rapport cyclique Ã  la valeur de duty
 	OCR2A = limit;	
 }
 
 void pwm2_set_PD6(uint8_t limit){
-	// Fixer le rapport cyclique à la valeur de duty
+	// Fixer le rapport cyclique Ã  la valeur de duty
 	OCR2B = limit;
 }
 
