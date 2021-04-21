@@ -1,3 +1,4 @@
+
 /*
  * Projet_Multi_4X4.c
  *
@@ -91,5 +92,3 @@ int main(void){
 	display_heartbeat();		
 	}
 }
-
-	

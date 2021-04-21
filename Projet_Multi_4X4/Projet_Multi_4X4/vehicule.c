@@ -1,3 +1,4 @@
+
 /*
  * CFile1.c
  *
@@ -24,12 +25,12 @@
 
 //****Constante*****
 const static uint8_t PUISSANCE_MAX = 255;
-const static uint8_t PUISSANCE_MOTEUR_ROUE_INERTIE = 200;
-const static uint8_t PUISSANCE_MOTEUR_ELEVATION = 130;
-const static uint8_t DELAIS_DEPART_ROUE_INERTIE = 20;
+const static uint8_t PUISSANCE_MOTEUR_ROUE_INERTIE = 160;
+const static uint8_t PUISSANCE_MOTEUR_ELEVATION = 255;
+const static uint8_t DELAIS_DEPART_ROUE_INERTIE = 30;
 const static uint8_t RESET_CLOCK = 0;
 const static uint8_t DELAIS_TIRS = 60;
-const static uint8_t DELAIS_SERVO_MOTEUR = 4;
+const static uint8_t DELAIS_SERVO_MOTEUR = 10;
 
 //*******int********
 static uint16_t clock1 = 0;
@@ -38,7 +39,7 @@ static uint16_t clock3 = 0;
 static uint8_t memoire = 0;
 
 /************************************************************************/
-/*                 DRIVER MOUVEMENT 4X4                                   */
+/*                 DRIVER MOUVEMENT 4X4                                 */
 /************************************************************************/
 
 /*
@@ -50,13 +51,14 @@ static uint8_t memoire = 0;
 */
 void driverRotation (uint8_t x, uint8_t z){
 			if (x >= 200){
-				DDRB = clear_bits(DDRB, 0b0000110); // REFACTOR
-				PORTB = set_bit(DDRB, 2);			// REFACTOR
+				DDRB = clear_bits(DDRB, 0b0000110);	// REFACTOR
+				PORTB = set_bit(DDRB, 1);			// REFACTOR
 				setPuissanceMoteurRoue(z);
 			}
 			else if (x <= 100){
-				DDRB = clear_bits(DDRB, 0b0000110);	// REFACTOR
-				PORTB = set_bit(DDRB, 1);			// REFACTOR
+
+				DDRB = clear_bits(DDRB, 0b0000110); // REFACTOR
+				PORTB = set_bit(DDRB, 2);			// REFACTOR
 				setPuissanceMoteurRoue(z);
 			}
 			else{
@@ -66,7 +68,11 @@ void driverRotation (uint8_t x, uint8_t z){
 
 
 
-//Set puissance des roues
+/*Set puissance des roues
+*
+*Parametre uint8_t : valeur puissance desirer
+*
+*/
 void setPuissanceMoteurRoue (uint8_t valeur){
 	pwm0_set_PB3(valeur);
 	pwm0_set_PB4(valeur);
@@ -74,7 +80,12 @@ void setPuissanceMoteurRoue (uint8_t valeur){
 
 
 
-//Variation de vitesse pour tourner vers la gauche
+/*Variation de vitesse pour tourner vers la gauche
+*
+*Parametre uint8_t : valeur joystick X
+*Parametre uint8_t : valeur joystick Z
+*
+*/
 void setPuissance_gauche (uint8_t x, uint8_t z){
 	double rapport = 1;
 	double vitesse = z;
@@ -92,7 +103,12 @@ void setPuissance_gauche (uint8_t x, uint8_t z){
 }
 
 
-//Variation de vitesse pour tourner vers la droite
+/*Variation de vitesse pour tourner vers la droite
+*
+*Parametre uint8_t : valeur joystick X
+*Parametre uint8_t : valeur joystick Z
+*
+*/
 void setPuissance_droite (uint8_t x, uint8_t z){
 	double rapport = 1;
 	double vitesse = z;
@@ -111,7 +127,12 @@ void setPuissance_droite (uint8_t x, uint8_t z){
 
 
 
-//Variation de vitesse pour tourner (droite et gauche)
+/*Variation de vitesse pour tourner (droite et gauche)
+*
+*Parametre uint8_t : valeur joystick X
+*Parametre uint8_t : valeur joystick Z
+*
+*/
 void setPuissance_tourner (uint8_t x, uint8_t z){
 	if (x <= 125){
 		setPuissance_gauche (x,z);
@@ -126,7 +147,13 @@ void setPuissance_tourner (uint8_t x, uint8_t z){
 
 
 
-//fonction pour déplacer le véhicule (tourner et reculer/avancer)
+/*fonction pour déplacer le véhicule (tourner et reculer/avancer
+*
+*Parametre uint8_t : bouton joystick
+*Parametre uint8_t : valeur joystick X
+*Parametre uint8_t : valeur joystick Y
+*
+*/
 void driverDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 		if (joystick == 1){
 			PORTB = clear_bits(DDRB, 0b0000110);	// REFACTOR
@@ -201,17 +228,18 @@ void driverDeplacement(uint8_t joystick, uint8_t x, uint8_t z){
 	*/
 	
 	void driverServoMoteur(uint8_t bouton){
-	if (bouton && clock1 >= 60 && memoire == 0){
+	if (bouton && clock1 >= DELAIS_TIRS && memoire == 0){
 		memoire = 1;
 	}
-	else if (clock1 >= 60 && memoire == 1){
-		pwm1_set_PD5(1250);	
+	else if (clock1 >= 60 && memoire == 1 && clock3 < DELAIS_SERVO_MOTEUR){
+		pwm1_set_PD5(900);	
 		clock3++;
 	} 
 	else if(clock3 >= DELAIS_SERVO_MOTEUR){
-		clock1 = 0;
-		clock3 = 0;
+		clock1 = RESET_CLOCK;
+		clock3 = RESET_CLOCK;
 		memoire = 0;
+		pwm1_set_PD5(2300);	
 	}
 	else
 		pwm1_set_PD5(2300);	
