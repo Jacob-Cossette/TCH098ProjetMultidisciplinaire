@@ -1,4 +1,4 @@
-main.d main.o: .././main.c \
+manette.d manette.o: .././manette.c \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\sfr_defs.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\inttypes.h \
@@ -17,7 +17,7 @@ main.d main.o: .././main.c \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
  f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
- .././lcd.h .././utils.h .././driver.h .././uart.h .././manette.h
+ .././lcd.h .././utils.h .././driver.h .././uart.h
 
 f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -62,5 +62,3 @@ f:\logiciels\atmelstudio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.
 .././driver.h:
 
 .././uart.h:
-
-.././manette.h:

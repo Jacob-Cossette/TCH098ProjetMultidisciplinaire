@@ -41,6 +41,7 @@ C_SRCS +=  \
 ../fifo.c \
 ../lcd.c \
 ../main.c \
+../manette.c \
 ../uart.c \
 ../utils.c
 
@@ -56,6 +57,7 @@ driver.o \
 fifo.o \
 lcd.o \
 main.o \
+manette.o \
 uart.o \
 utils.o
 
@@ -64,6 +66,7 @@ driver.o \
 fifo.o \
 lcd.o \
 main.o \
+manette.o \
 uart.o \
 utils.o
 
@@ -72,6 +75,7 @@ driver.d \
 fifo.d \
 lcd.d \
 main.d \
+manette.d \
 uart.d \
 utils.d
 
@@ -80,6 +84,7 @@ driver.d \
 fifo.d \
 lcd.d \
 main.d \
+manette.d \
 uart.d \
 utils.d
 
@@ -119,6 +124,13 @@ LINKER_SCRIPT_DEP+=
 	
 
 ./main.o: .././main.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)F:\Logiciels\AtmelStudio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DF_CPU=8000000UL  -I"F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega324a -B "F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega324a" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+./manette.o: .././manette.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
 	$(QUOTE)F:\Logiciels\AtmelStudio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG -DF_CPU=8000000UL  -I"F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega324a -B "F:\Logiciels\AtmelStudio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega324a" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 

@@ -119,7 +119,5 @@ int main(void)
 	
 }
 
-void display_heartbeat(void) {
-	static uint8_t heartbeat = 'Z';
 
 #endif

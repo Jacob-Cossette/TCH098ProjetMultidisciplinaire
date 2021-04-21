@@ -5,7 +5,8 @@
  *  Author: AR17930
  */ 
 
-
+#ifndef __EQUIPE43_MANETTE__
+#define __EQUIPE43_MANETTE__
  
  //initialiser PD5, PD6, PD7 pour les trois switch
 void sw_init();
@@ -26,9 +27,12 @@ void display_mode(const uint8_t mode, const uint8_t moteur, const uint8_t joysti
 void lire_etat_lancer(uint8_t* lancer, uint8_t* etat);
 
 
+void lire_potentiometres(uint8_t*x, uint8_t*y, uint8_t*inclinaison);
 
 //Fonction pour lire l'état du joystick
 void lire_mode_joystick (uint8_t*mode, const uint8_t bit, uint8_t*etat);
 
 //Test pour vérifier l'affichage et le rafraîchissement
 void display_heartbeat(void);
+
+#endif

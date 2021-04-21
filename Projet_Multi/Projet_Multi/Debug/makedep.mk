@@ -10,6 +10,8 @@ lcd.c
 
 main.c
 
+manette.c
+
 uart.c
 
 utils.c
