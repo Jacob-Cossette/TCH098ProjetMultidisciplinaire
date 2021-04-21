@@ -31,6 +31,10 @@ void sw_init() {
 	// PD5 entrée pour SW3
 	DDRD = clear_bit(DDRD, PD5);
 	PORTD = set_bit(PORTD, PD5);
+	
+	//  entrée pour bouton joystick
+	DDRA = clear_bit(DDRA, PA2);
+	PORTA = set_bit(PORTA, PA2);
 }
 
 
@@ -75,10 +79,25 @@ void lire_mode (uint8_t*mode, const uint8_t bit, uint8_t*etat){
 	}
 }
 
+//Lire le mode d'une switch de la manette et alterné entre deux modes à chaque clic
+void lire_mode_joystick (uint8_t*mode, const uint8_t bit, uint8_t*etat){
+	uint8_t b = read_bit(PINA, bit);
+
+	//La switch n'est pas influencé par le temps d'appui
+	if (*etat != b) {
+		*etat = b;
+		if(*mode==0 && *etat==0){
+			*mode=1;
+		}
+		else if (*mode==1 && *etat==0){
+			*mode=0;
+		}
+	}
+}
 
 
 //Afficher le mode et l'état du moteur de lance_frisbee de la manette
-void display_mode(const uint8_t mode, const uint8_t moteur) {
+void display_mode(const uint8_t mode, const uint8_t moteur, const uint8_t joystick) {
 	char str[40];
 
 	//Affichage mode du véhicule
@@ -93,20 +112,30 @@ void display_mode(const uint8_t mode, const uint8_t moteur) {
 	
 	//Affichage état moteur
 	if (moteur == 1){
-			lcd_set_cursor_position(10,0);
-			lcd_write_string("PRET\n");
+			lcd_set_cursor_position(8,0);
+			lcd_write_string("PRET\0");
 	}
+	
+	if (joystick == 1){
+			lcd_set_cursor_position(14,0);
+			lcd_write_string("R\0");
+	}
+		
+	else{
+			lcd_set_cursor_position(14,0);
+			lcd_write_string("D\0");
+	}
+		
 }
 
 
 //Fonction permettant de déterminer le nombres de munitions restants et lire la SW3 pour faire un lancer 
-void lire_etat_lancer(uint8_t* lancer, uint8_t* etat, uint8_t* del) {
+void lire_etat_lancer(uint8_t* lancer, uint8_t* etat) {
 	uint8_t b = !read_bit(PIND, PA5);
 
 	//Si la SW est activée
 	if (*etat == 0 && b == 1) {
 		*lancer = 1;
-		*del /= 2; //le nombre de del allumé indique le nombre de munitions qui reste
 	}
 
 	//Si la SW n'est pas activée

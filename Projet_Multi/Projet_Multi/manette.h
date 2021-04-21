@@ -19,12 +19,16 @@ void lire_mode(uint8_t* mode, const uint8_t bit, uint8_t* etat1);
 
 
 //Afficher le mode et l'état du moteur de lance_frisbee de la manette
-void display_mode(const uint8_t mode, const uint8_t moteur );
+void display_mode(const uint8_t mode, const uint8_t moteur, const uint8_t joystick);
 
 
 //Fonction permettant de déterminer le nombres de munitions restants et lire la SW3 pour faire un lancer
-void lire_etat_lancer(uint8_t* lancer, uint8_t* etat, uint8_t* del);
+void lire_etat_lancer(uint8_t* lancer, uint8_t* etat);
 
+
+
+//Fonction pour lire l'état du joystick
+void lire_mode_joystick (uint8_t*mode, const uint8_t bit, uint8_t*etat);
 
 //Test pour vérifier l'affichage et le rafraîchissement
 void display_heartbeat(void);
